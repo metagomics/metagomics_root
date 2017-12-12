@@ -20,6 +20,7 @@ import javax.imageio.ImageIO;
 import org.uwpr.metagomics.dto.RunDTO;
 import org.uwpr.metagomics.dto.UploadedFastaFileDTO;
 import org.uwpr.metagomics.go_counter.database.RunDAO;
+import org.uwpr.metagomics.utils.VersionUtils;
 import org.uwpr.metaomics.molly.stats.StatsUtils;
 import org.uwpr.metaproteomics.emma.go.GONode;
 import org.uwpr.metaproteomics.emma.go.GONodeFactory;
@@ -225,6 +226,10 @@ public class RunComparisonProcessor {
 					try {
 						
 						fw = new FileWriter( outputFile );
+						
+						fw.write( "# MetaGOmics GO comparison report" );
+						fw.write( "# MetaGOmics version: " + VersionUtils.getVersion() + "\n" );
+						fw.write( "# Run date: " + new java.util.Date() + "\n" );
 						
 						fw.write( "# Run1 = " + run1.getNickname() + "\n" );
 						fw.write( "# Run2 = " + run2.getNickname() + "\n" );

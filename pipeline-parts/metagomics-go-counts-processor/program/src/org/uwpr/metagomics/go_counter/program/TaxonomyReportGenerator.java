@@ -13,6 +13,7 @@ import org.uwpr.metagomics.database.DBConnectionManager;
 import org.uwpr.metagomics.go_counter.database.RunDAO;
 import org.uwpr.metagomics.go_counter.database.UploadedFastaFileDAO;
 import org.uwpr.metagomics.taxonomy.CommonTaxonomicUnitSearcher;
+import org.uwpr.metagomics.utils.VersionUtils;
 import org.uwpr.metaproteomics.emma.go.GONode;
 import org.yeastrc.ncbi.taxonomy.object.NCBITaxonomyNode;
 import org.yeastrc.ncbi.taxonomy.utils.NCBITaxonomyUtils;
@@ -85,7 +86,11 @@ public class TaxonomyReportGenerator {
 			File reportFile = new File( reportDirectory, "taxonomy_report_" + run.getId() + ".txt" );
 				
 			fw = new FileWriter( reportFile );
-				
+			
+			fw.write( "# MetaGOmics taxonomy report" );
+			fw.write( "# MetaGOmics version: " + VersionUtils.getVersion() + "\n" );
+			fw.write( "# Run date: " + new java.util.Date() + "\n" );
+			
 			fw.write( "GO acc\tGO aspect\tGO name\ttaxon name\tNCBI taxonomy id\ttaxonomy rank\tPSM count\tratio of GO\tratio of run\n" );
 				
 				

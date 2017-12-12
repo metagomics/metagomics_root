@@ -28,6 +28,7 @@ import org.uwpr.metagomics.go_counter.database.GOSearcher;
 import org.uwpr.metagomics.go_counter.database.PeptideDAO;
 import org.uwpr.metagomics.go_counter.database.RunDAO;
 import org.uwpr.metagomics.go_counter.database.UploadedFastaFileDAO;
+import org.uwpr.metagomics.utils.VersionUtils;
 import org.uwpr.metaproteomics.emma.go.GONode;
 import org.uwpr.metaproteomics.emma.go.SingleRunGOGraphGenerator;
 
@@ -122,6 +123,10 @@ public class GOCounterRunner {
 				File reportFile = new File( reportDirectory, "go_report_" + run.getId() + ".txt" );
 				
 				fw = new FileWriter( reportFile );
+				
+				fw.write( "# MetaGOmics GO report" );
+				fw.write( "# MetaGOmics version: " + VersionUtils.getVersion() + "\n" );
+				fw.write( "# Run date: " + new java.util.Date() + "\n" );
 				
 				fw.write( "GO acc\tGO aspect\tGO name\tcount\ttotal count\tratio\n" );
 				
