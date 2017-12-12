@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://struts.apache.org/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+  <data-sources />
+
+  <form-beans>
+		<form-bean name="uploadFASTAForm" type="org.uwpr.metagomics.actionforms.UploadFastaActionForm"/>
+		<form-bean name="uploadRunForm" type="org.uwpr.metagomics.actionforms.UploadRunActionForm"/>
+   </form-beans>
+  
+  <global-exceptions />
+  
+
+  <global-forwards>
+
+   
+  </global-forwards>
+  
+    <action-mappings>
+		
+		<action path="/home"
+				type="org.uwpr.metagomics.actions.HomeAction"
+				scope="request"
+				validate="false">
+		    <forward name="Success" path="/WEB-INF/jsp-pages/home.jsp" redirect="false"/>
+		</action>	
+
+		<action
+		  path="/viewUploadedFasta"
+		  type="org.uwpr.metagomics.actions.ViewUploadedFastaFileAction"
+		  scope="request"
+		  validate="false">
+		  <forward name="Success" path="/WEB-INF/jsp-pages/view-uploaded-fasta.jsp" redirect="false"/>
+		  <forward name="Failure" path="/WEB-INF/jsp-pages/error-page.jsp" redirect="false"/>
+		</action>
+		
+		<action
+		  path="/downloadSingleRunData"
+		  type="org.uwpr.metagomics.actions.DownloadDataSingleRunAction"
+		  scope="request"
+		  validate="false">
+		</action>
+
+		<action
+		  path="/downloadTwoRunData"
+		  type="org.uwpr.metagomics.actions.DownloadDataTwoRunsAction"
+		  scope="request"
+		  validate="false">
+		</action>
+
+		<action
+		  path="/uploadFASTA"
+		  type="org.uwpr.metagomics.actions.UploadFastaAction"
+		  input="/WEB-INF/jsp-pages/home.jsp"
+		  scope="request"
+		  validate="false">
+		  <forward name="Failure" path="/WEB-INF/jsp-pages/home.jsp" redirect="false"/>
+		  <forward name="Success" path="/viewUploadedFasta.do" redirect="true"/>
+		</action>
+		
+		<action
+		  path="/uploadRun"
+		  type="org.uwpr.metagomics.actions.UploadRunAction"
+		  name="uploadRunForm"
+		  scope="request"
+		  validate="false">
+		  <forward name="Failure" path="/WEB-INF/jsp-pages/home.jsp" redirect="false"/>
+		  <forward name="Success" path="/viewUploadedFasta.do" redirect="true"/>
+		</action>
+
+		<action
+		  path="/downloadFASTAForRunBlast"
+		  type="org.uwpr.metagomics.actions.DownloadFastaForRunBlastAction"
+		  scope="request">
+		</action>		
+		
+		<action
+		  path="/uploadRunBlastResults"
+		  type="org.uwpr.metagomics.actions.UploadRunBlastResultsAction"
+		  scope="request">
+		</action>		
+		
+		
+  </action-mappings>
+  
+  <!-- properties file for Struts messages -->
+  <message-resources parameter="web_app_application_properties" />
+  
+</struts-config>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." name="Run_MetagomicsFastaParser_Jobcenter_Module build jar" default="createInstallables">
+
+
+	<!-- The same name cannot be used more than once for a property   -->
+
+  <target name="init">
+    <tstamp/>
+
+
+  	<!-- name of jar or whatever that is copied to deploy -->
+
+    <property name="installationNameRun_MetagomicsFastaParser_Jobcenter_Module" value="Run_MetagomicsFastaParser_Jobcenter_Module_installation" />
+
+	<!-- main jar for this module  -->
+    <property name="module_main_jar" value="run_metagomics_fasta_parser_main_code.jar" />
+  	<property name="module_main_jar_dir" value="main_code_jar_generated" />
+
+    <property name="src" value="src" />
+    <property name="build" value="build" />
+    <property name="classes" value="classes" />
+    <property name="deploy" value="deploy" />
+    <property name="config" value="resources" />
+    <property name="runDir" value="." />
+    <property name="local" value="local" />
+    <property name="remote" value="remote" />
+    <property name="lib" value="lib" />
+  </target>
+
+  <target name="clean" depends="init">
+    <delete dir="${deploy}" />
+    <delete dir="installables" />
+  </target>
+
+  <target name="prepare" depends="clean">
+    <mkdir dir="${deploy}" />
+    <mkdir dir="installables" />
+  </target>
+
+
+
+
+
+  <target name="compileAllSubmodules" depends="prepare">
+	
+  	<ant antfile="ant_build_module_code_jar.xml" /> 
+  	<!--  run ant_build__main__module_jar.xml and default ant task in this directory -->
+  	
+  </target>
+
+
+
+ <target name="init_createInstallables" depends="compileAllSubmodules" > <!--  depends="compileAllSubmodules" -->
+    <delete dir="installables" />
+
+
+    <mkdir dir="installables" />
+
+  </target>
+
+
+
+
+	  <!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+
+
+	  <!--    Module to run in JobCenter -->
+
+	  <target name="createInstallableRunProgram">
+
+
+	  	<!-- subdirectory being processed -->
+	    <property name="subdirectoryNameRun_MetagomicsFastaParser_Jobcenter_Module" value="Run_MetagomicsFastaParser_Jobcenter_Module" />
+
+	  	<!-- main jar in subdirectory being processed -->
+	    <property name="subdirectoryMainJarRunProgram" value="run_Program_RequiredThreads_module_main.jar" />
+
+
+	    <mkdir dir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}" />
+
+	<!--
+		<copy file="general_files_for_installables/README_General_Overview.txt" todir="installables/jobmanager_client_installation" />
+
+	-->
+
+
+		<mkdir dir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}" />
+		<mkdir dir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/config" />
+		<mkdir dir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/lib" />
+		<mkdir dir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/main_jar" />
+
+		<mkdir dir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/config_sample_files" />
+
+
+	  	<copy todir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/lib" >
+	  		    <fileset dir="lib">
+
+		    	<!--
+				<include name="**/*.properties" />
+		    	-->
+		    </fileset>
+	  	</copy>
+
+	  	
+	  	<copy file="${module_main_jar_dir}${file.separator}${module_main_jar}" todir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/main_jar" />
+
+	<!--
+		<copy file="general_files_for_installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/config_sample_files_directory_explanation.txt" todir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/config_sample_files" />
+	-->
+	  	<copy todir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/config_sample_files" >
+	  		    <fileset dir="config_sample_files">
+		    </fileset>
+	  	</copy>
+
+	<!--
+	  	<copy todir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/config" >
+	  		    <fileset dir="${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/config">
+		    </fileset>
+	  	</copy>
+	-->
+
+
+
+
+
+
+	    <jar jarfile="${deploy}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}.jar" basedir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}" />
+
+
+
+	  	<delete file="${deploy}${file.separator}${module_main_jar}" />
+
+	  </target>
+
+
+
+
+
+
+	  <!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+
+	<!--  make all fake target -->
+
+  <target name="createInstallables" depends="compileAllSubmodules, init_createInstallables, createInstallableRunProgram" >
+
+
+
+  </target>
+
+		
+
+</project>
