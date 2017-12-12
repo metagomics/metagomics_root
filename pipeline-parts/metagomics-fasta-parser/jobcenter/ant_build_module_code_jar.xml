@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="US-ASCII" ?>
+<project name="RunMetagomicsFastaParser_MainCodeJar" default="build_jar" basedir=".">
+
+  <target name="init">
+    <tstamp/>
+
+  	<!-- name of jar or whatever that is copied to deploy -->
+    <property name="deployablename" value="run_metagomics_fasta_parser_main_code.jar" />
+
+    <property name="src" value="src" />
+    <property name="build" value="build" />
+    <property name="classes" value="classes" />
+    <property name="deploy_main_code_jar_generated" value="main_code_jar_generated" />
+    <property name="config" value="resources" />
+    <property name="runDir" value="." />
+    <property name="local" value="local" />
+    <property name="remote" value="remote" />
+    <property name="lib" value="lib" />
+	<property name="lib_compile_only" value="lib_compile_only" />
+	
+  </target>
+
+
+	<property name="aa_Ant_Config__dir_name" value="aa_Ant_Config" />
+
+	<property name="path_to__aa_Ant_Config" value="${aa_Ant_Config__dir_name}" />
+
+
+	<tstamp prefix="build-info">
+		<format property="current-date" pattern="d-MMMM-yyyy" locale="en" />
+		<format property="current-time" pattern="hh:mm:ss a z" locale="en" />
+		<format property="year-month-day" pattern="yyyy-MM-dd" locale="en" />
+	</tstamp>
+	
+	
+	
+	<!-- ================================================================================== -->
+	<!--  overall Ant properties in overall_build_config.properties -->
+	<!-- ================================================================================== -->
+	
+	
+	<property name="overall_build_config.properties__file_with_path" 
+		value="${path_to__aa_Ant_Config}${file.separator}overall_build_config.properties"/>
+		
+	<fail message="ERROR: 'overall_build_config.properties' file not found, check the path. filename with path: ${overall_build_config.properties__file_with_path}">
+	<condition>
+	    <not>
+	    	<available file="${overall_build_config.properties__file_with_path}" />
+	    </not>
+	</condition>
+	</fail>
+	
+	<!-- This does not fail if the file is not found -->
+	<property file="${overall_build_config.properties__file_with_path}" />
+	
+	
+	
+
+  <target name="clean" depends="init">
+    <delete dir="${classes}" />
+    <delete dir="${deploy_main_code_jar_generated}" />
+  </target>
+
+  <target name="prepare" depends="clean">
+    <mkdir dir="${classes}" />
+    <mkdir dir="${deploy_main_code_jar_generated}" />
+  </target>
+
+  <target name="compile" depends="prepare">
+  	<javac srcdir="${src}" destdir="${classes}" debug="true"  
+  		source="${java.compiler.source.version}" 
+  		target="${java.compiler.destination.version}" 
+  		encoding="${java.source.character.set}" >
+		<classpath refid="classpath"/>
+	</javac>
+
+
+	<!-- Copy resources to the classes directory -->
+	<copy todir="${classes}">
+		<fileset dir="${config}" />
+	</copy>
+	
+	<!-- Copy any resources from source (not .java) to the classes directory -->
+	<copy todir="${classes}">
+		<fileset dir="${src}">
+			<exclude name="**/*.java" />
+		</fileset>
+	</copy>
+
+
+  </target>
+	
+	
+	<!-- ================================================================================== -->
+	<!-- Create a Manifest.MF file with the SVN info -->
+	<!-- ================================================================================== -->
+	<target name="manifest" depends="prepare">
+		<manifest file="${basedir}/MANIFEST.MF">
+			<attribute name="Built-By" value="${user.name}"/>
+			<attribute name="Date" value="${build-info.current-date}" />
+			<attribute name="Time" value="${build-info.current-time}" />
+		</manifest>
+	</target>	
+	
+	<!-- ================================================================================== -->
+	<!-- Build the jar -->
+	<!-- ================================================================================== -->
+	<target name="build_jar" depends="compile,manifest"
+			description="Packages the project as a jar file">
+		
+		
+		<!-- exclude everything in the default packaage-->
+		
+		<!--
+		<jar destfile="${basedir}${file.separator}mslib.jar" 
+			basedir="${basedir}${file.separator}bin"
+			excludes="*.*" 
+			manifest="${basedir}/MANIFEST.MF">
+			
+		</jar>
+		-->
+		
+		<jar destfile="${basedir}${file.separator}${deploy_main_code_jar_generated}/${deployablename}" 
+			basedir="${basedir}${file.separator}${classes}"
+			manifest="${basedir}/MANIFEST.MF">
+			
+		</jar>		
+
+		
+	</target>
+	
+	
+
+	<path id="classpath">
+		<fileset dir="lib">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="lib_compile_only">
+			<include name="**/*.jar" />
+		</fileset>
+				
+	</path>
+
+</project>
