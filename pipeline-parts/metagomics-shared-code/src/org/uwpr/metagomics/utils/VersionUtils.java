@@ -1,7 +1,6 @@
 package org.uwpr.metagomics.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -21,14 +20,25 @@ public class VersionUtils {
 		
 		if( _VERSION == null ) {
 			try {
-				File file = new File("version.properties");
-				FileInputStream fileInput = new FileInputStream(file);
-				Properties properties = new Properties();
-				properties.load(fileInput);
-				fileInput.close();
 				
+				ClassLoader thisClassLoader = VersionUtils.class.getClassLoader();
+				InputStream propertiesFileAsStream = thisClassLoader.getResourceAsStream( "version.properties" );
+
+				if ( propertiesFileAsStream == null ) {
+
+					throw new Exception( "Could not find version.properties in class path." );
+				}
+
+				Properties properties = new Properties();
+				properties.load( propertiesFileAsStream );
+
 				_VERSION = properties.getProperty( "version" );
 
+				
+				try {
+					propertiesFileAsStream.close();
+				} catch( Exception e ) { ; }
+				
 			} catch( Exception e ) {
 				_VERSION = "Error retrieving version.";
 			}
