@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +25,6 @@ import org.uwpr.metagomics.utils.VersionUtils;
 import org.uwpr.metaomics.molly.stats.StatsUtils;
 import org.uwpr.metaproteomics.emma.go.GONode;
 import org.uwpr.metaproteomics.emma.go.GONodeFactory;
-import org.uwpr.metaproteomics.emma.go.TwoRunGOGraphGenerator;
 
 public class RunComparisonProcessor {
 
@@ -320,7 +320,19 @@ public class RunComparisonProcessor {
 				
 				
 				// write out images for this comparison
-				{
+				
+				boolean createImages = false;
+				try {
+					if( Class.forName( "org.uwpr.local.graph_image.TwoRunGOGraphGenerator", false, null ) != null )
+						createImages = true;
+					
+				} catch( Exception e ) {
+					
+				}
+				
+				
+				if( createImages ) {
+					
 					for( String aspect : COMPARE_DATA.keySet() ) {
 						
 						Map<String, TwoRunGraphOb> compareData = COMPARE_DATA.get( aspect );
@@ -340,15 +352,21 @@ public class RunComparisonProcessor {
 							File imageFile = new File( dataDirectory, outputFilenameBase + "_" + aspect + ".png" );
 			
 							try {
-								// save off an image of the remaining GO tree
-								TwoRunGOGraphGenerator sg3 = new TwoRunGOGraphGenerator();
-								BufferedImage image  = sg3.getGOGraphImage( compareData );
+								
+								Class<?> cls = Class.forName( "org.uwpr.local.graph_image.TwoRunGOGraphGenerator" );														
+								Object obj = cls.newInstance();
+
+								Method method = cls.getDeclaredMethod( "getGOGraphImage", compareData.getClass() );
+
+								BufferedImage image = (BufferedImage)method.invoke( obj, compareData );
 								
 							    ImageIO.write(image, "png", imageFile);
 							    
 							    
 							    imageFile = new File( dataDirectory, outputFilenameBase + "_" + aspect + ".svg" );
-							    sg3.saveGOGraphSVGImage( compareData, imageFile);
+							    
+								Method method2 = cls.getDeclaredMethod( "saveGOGraphSVGImage", compareData.getClass(), imageFile.getClass() );
+								method2.invoke( obj, compareData, imageFile );
 	
 							} catch ( Exception e ) {
 								System.out.println( "Error creating images: " + e.getMessage() );

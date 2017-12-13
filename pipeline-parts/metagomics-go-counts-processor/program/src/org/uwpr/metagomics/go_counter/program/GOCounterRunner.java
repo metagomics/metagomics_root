@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,7 +31,6 @@ import org.uwpr.metagomics.go_counter.database.RunDAO;
 import org.uwpr.metagomics.go_counter.database.UploadedFastaFileDAO;
 import org.uwpr.metagomics.utils.VersionUtils;
 import org.uwpr.metaproteomics.emma.go.GONode;
-import org.uwpr.metaproteomics.emma.go.SingleRunGOGraphGenerator;
 
 public class GOCounterRunner {
 
@@ -160,49 +160,66 @@ public class GOCounterRunner {
 		Map<String, Map<String, SingleRunGraphOb>> THE_DATA = new HashMap<>();
 		{
 			
+			boolean createImages = false;
+			try {
+				if( Class.forName( "org.uwpr.local.graph_image.SingleRunGOGraphGenerator", false, null ) != null )
+					createImages = true;
+				
+			} catch( Exception e ) {
+				
+			}
 			
-			for( GONode node : GO_NODE_COUNT_MAP.keySet() ) {
-				
-				if( !THE_DATA.containsKey( node.getTermType() ) ) {
-					THE_DATA.put( node.getTermType(), new HashMap<>() );
-				}
-				
-				Map<String, SingleRunGraphOb> data = THE_DATA.get( node.getTermType() );
-				
-				int count = GO_NODE_COUNT_MAP.get( node );
-				double ratio = (double)count / (double)RUN_PSM_COUNT;
-				
-				SingleRunGraphOb ob = new SingleRunGraphOb();
-				ob.setCount( count );
-				ob.setRatio( ratio );
-				ob.setNode( node );
-				ob.setRunPsmTotal( RUN_PSM_COUNT );
-				
-				data.put( node.getAcc(), ob );
-			}			
-			
-			for( String aspect : THE_DATA.keySet() ) {
-				
-				Map<String, SingleRunGraphOb> data = THE_DATA.get( aspect );
-
-				if( data.keySet().size() > 0 ) {
+			if( createImages ) {
+				for( GONode node : GO_NODE_COUNT_MAP.keySet() ) {
 					
-					File imageFile = new File( reportDirectory, "go_image_" + aspect + "_" + run.getId() + ".png" );
+					if( !THE_DATA.containsKey( node.getTermType() ) ) {
+						THE_DATA.put( node.getTermType(), new HashMap<>() );
+					}
+					
+					Map<String, SingleRunGraphOb> data = THE_DATA.get( node.getTermType() );
+					
+					int count = GO_NODE_COUNT_MAP.get( node );
+					double ratio = (double)count / (double)RUN_PSM_COUNT;
+					
+					SingleRunGraphOb ob = new SingleRunGraphOb();
+					ob.setCount( count );
+					ob.setRatio( ratio );
+					ob.setNode( node );
+					ob.setRunPsmTotal( RUN_PSM_COUNT );
+					
+					data.put( node.getAcc(), ob );
+				}			
+				
+				for( String aspect : THE_DATA.keySet() ) {
+					
+					Map<String, SingleRunGraphOb> data = THE_DATA.get( aspect );
 	
-					try {
-						// save off an image of the remaining GO tree
-						SingleRunGOGraphGenerator sg3 = new SingleRunGOGraphGenerator();
-						BufferedImage image  = sg3.getGOGraphImage( data );
+					if( data.keySet().size() > 0 ) {
 						
-					    ImageIO.write(image, "png", imageFile);
-					    
-					    
-					    imageFile = new File( reportDirectory, "go_image_" + aspect + "_" + run.getId() + ".svg" );
-					    sg3.saveGOGraphSVGImage( data, imageFile);
+						File imageFile = new File( reportDirectory, "go_image_" + aspect + "_" + run.getId() + ".png" );
+		
+						try {
+							// save off an image of the remaining GO tree
+							
+							Class<?> cls = Class.forName( "org.uwpr.local.graph_image.SingleRunGOGraphGenerator" );														
+							Object obj = cls.newInstance();
 
-					} catch ( Exception e ) {
-						System.out.println( "Error creating images: " + e.getMessage() );
-						System.err.println( "Error creating images: " + e.getMessage() );
+							Method method = cls.getDeclaredMethod( "getGOGraphImage", data.getClass() );
+
+							BufferedImage image = (BufferedImage)method.invoke( obj, data );
+							
+						    ImageIO.write(image, "png", imageFile);
+						    
+						    
+						    imageFile = new File( reportDirectory, "go_image_" + aspect + "_" + run.getId() + ".svg" );
+						    
+							Method method2 = cls.getDeclaredMethod( "saveGOGraphSVGImage", data.getClass(), imageFile.getClass() );
+							method2.invoke( obj, data, imageFile );
+						    	
+						} catch ( Exception e ) {
+							System.out.println( "Error creating images: " + e.getMessage() );
+							System.err.println( "Error creating images: " + e.getMessage() );
+						}
 					}
 				}
 			}
