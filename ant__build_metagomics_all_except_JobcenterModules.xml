@@ -52,6 +52,9 @@
 		<ant dir="pipeline-parts/metagomics-run-blast-and-jc-wrapper/metagomics-run-blast"
 			antfile="ant__create_runnable_jar.xml" target="clean" />
 
+		<ant dir="web-app/metagomics-web-app"
+			antfile="ant_build_webapp_war.xml" target="clean" />
+
 	</target>
 
 
@@ -69,6 +72,7 @@
 		
 		<ant dir="pipeline-parts/metagomics-shared-code"
 			antfile="ant__create_jar.xml" />
+		
 		<ant dir="pipeline-parts/metagomics-blast-results-parser/program"
 			antfile="ant__create_runnable_jar.xml" />
 		<ant dir="pipeline-parts/metagomics-fasta-parser/program"
@@ -80,6 +84,8 @@
 		<ant dir="pipeline-parts/metagomics-run-blast-and-jc-wrapper/metagomics-run-blast"
 			antfile="ant__create_runnable_jar.xml" />
 
+		<ant dir="web-app/metagomics-web-app"
+			antfile="ant_build_webapp_war.xml" />
 	</target>
 	
 
@@ -92,20 +98,23 @@
 		<copy todir="deploy" >
 			<fileset dir="pipeline-parts/metagomics-blast-results-parser/program/deploy"/> 
 		</copy>
-		
 		<copy todir="deploy" >
-			<fileset dir="pipeline-parts/metagomics-fasta-parser/program"/> 
+			<fileset dir="pipeline-parts/metagomics-fasta-parser/program/deploy"/> 
 		</copy>
 		<copy todir="deploy" >
-			<fileset dir="pipeline-parts/metagomics-go-counts-processor/program"/> 
+			<fileset dir="pipeline-parts/metagomics-go-counts-processor/program/deploy"/> 
 		</copy>
 		<copy todir="deploy" >
-			<fileset dir="pipeline-parts/metagomics-peptide-count-upload-parser/program"/> 
+			<fileset dir="pipeline-parts/metagomics-peptide-count-upload-parser/program/deploy"/> 
 		</copy>
 		<copy todir="deploy" >
-			<fileset dir="pipeline-parts/metagomics-run-blast-and-jc-wrapper/metagomics-run-blast"/> 
+			<fileset dir="pipeline-parts/metagomics-run-blast-and-jc-wrapper/metagomics-run-blast/deploy"/> 
 		</copy>
 
+		<copy todir="deploy" >
+			<fileset dir="web-app/metagomics-web-app/deploy"/>
+		</copy>
+			
 	</target>
 	
 </project>

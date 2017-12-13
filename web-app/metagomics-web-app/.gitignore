@@ -1,0 +1,9 @@
+/bin/
+bin
+.project
+.classpath
+classes
+deploy
+zz_build_dir
+/WEB-INF/classes
+
