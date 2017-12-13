@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="US-ASCII" ?>
-<project name="Metagomics_Root_Build_All" default="createInstallables" basedir=".">
+<project name="Metagomics_Root_Build_All_Except_JobcenterModules" default="createInstallables" basedir=".">
 
 	<!--
 

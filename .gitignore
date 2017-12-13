@@ -3,3 +3,4 @@ bin
 .project
 .classpath
 deploy
+deploy_jobcenter_modules

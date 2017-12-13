@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="US-ASCII" ?>
+<project name="Metagomics_Root_Build_All_JobcenterModules" default="createInstallables" basedir=".">
+
+	<!--
+
+	  Ant build to build everything for Metagomics.
+
+	  Run the default target to build everything.
+
+	  If ant is installed and on the PATH,
+	  enter on the command line   "ant -f  ant__build_all_proxl.xml"
+	  in the base directory to build everything.
+
+	  -->
+
+	<property name="deploy_dir" value="deploy_jobcenter_modules" />
+	
+
+	<!-- init depends on nothing -->
+	<target name="init">
+		<tstamp />
+
+		<!-- name of jar or whatever that is copied to deploy -->
+
+		<!-- Properties -->
+
+		
+	</target>
+
+	<!--   Not in any 'target'  -->
+		
+		<tstamp prefix="build-info">
+			<format property="current-date" pattern="d-MMMM-yyyy" locale="en" />
+			<format property="current-time" pattern="hh:mm:ss a z" locale="en" />
+			<format property="year-month-day" pattern="yyyy-MM-dd" locale="en" />
+		</tstamp>
+		
+
+	<!-- Clean depends on init -->
+	<target name="clean" depends="init">
+		<delete dir="deploy_jobcenter_modules" />
+	</target>
+
+
+
+	<!-- Prepare depends on clean -->
+	<target name="prepare" depends="clean">
+		<mkdir dir="${deploy_dir}" />
+	</target>
+
+	<!--
+		compileAllSubmodules depends on prepare
+		executes external builds for each sub project
+	 -->
+	<target name="compileAllSubmodules" depends="prepare">
+		
+		<ant dir="pipeline-parts/metagomics-blast-results-parser/jobcenter"
+			antfile="ant_build__main__module_jar.xml" />
+		<ant dir="pipeline-parts/metagomics-fasta-parser/jobcenter"
+			antfile="ant_build__main__module_jar.xml" />
+		<ant dir="pipeline-parts/metagomics-go-counts-processor/jobcenter"
+			antfile="ant_build__main__module_jar.xml" />
+		<ant dir="pipeline-parts/metagomics-peptide-count-upload-parser/jobcenter"
+			antfile="ant_build__main__module_jar.xml" />
+		<ant dir="pipeline-parts/metagomics-run-blast-and-jc-wrapper/metagomics-run-blast-jc-wrapper"
+			antfile="ant_build__main__module_jar.xml" />
+	</target>
+	
+
+	<!--
+		createInstallables depends on compileAllSubmodules
+	-->
+	<target name="createInstallables" depends="compileAllSubmodules">
+
+		<!-- copy files from subdir 'deploy' to ${deploy_dir} -->
+		<copy todir="${deploy_dir}" >
+			<fileset dir="pipeline-parts/metagomics-blast-results-parser/jobcenter/deploy"/> 
+		</copy>
+		<copy todir="${deploy_dir}" >
+			<fileset dir="pipeline-parts/metagomics-fasta-parser/jobcenter/deploy"/> 
+		</copy>
+		<copy todir="${deploy_dir}" >
+			<fileset dir="pipeline-parts/metagomics-go-counts-processor/jobcenter/deploy"/> 
+		</copy>
+		<copy todir="${deploy_dir}" >
+			<fileset dir="pipeline-parts/metagomics-peptide-count-upload-parser/jobcenter/deploy"/> 
+		</copy>
+		<copy todir="${deploy_dir}" >
+			<fileset dir="pipeline-parts/metagomics-run-blast-and-jc-wrapper/metagomics-run-blast-jc-wrapper/deploy"/> 
+		</copy>
+			
+	</target>
+	
+</project>

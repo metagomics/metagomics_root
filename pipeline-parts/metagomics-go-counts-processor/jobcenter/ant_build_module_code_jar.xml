@@ -21,9 +21,10 @@
 	
   </target>
 
+	<available file="../../../.git" type="dir" property="git.present"/>
 
-	<property name="aa_Ant_Config__dir_name" value="aa_Ant_Config" />
-
+	
+	<property name="aa_Ant_Config__dir_name" value="../../../aa_Ant_Config" />
 	<property name="path_to__aa_Ant_Config" value="${aa_Ant_Config__dir_name}" />
 
 
