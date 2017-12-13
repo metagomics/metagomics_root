@@ -1,29 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="create_run_jar" name="metagomics-fasta-parser  Create Runnable Jar for Jar-in-Jar Loader">
+<project default="create_jar_this_project" name="metagomics-shared-code Create Jar">
 
-	<property name="jar.main.class" value="org.uwpr.metagomics.fasta_importer.program.MainProgram" />
-
-	<property name="output_runnable_jar" value="MetagomicsFastaParser.jar"/>
-
-
-	<property name="output_jar_this_project" value="MetagomicsFastaParser_MainCode.jar"/>
-
-
-	<property name="jar_this_project_dir" value="jar_this_project" />
-
-    <property name="deploy" value="deploy" />
+	<property name="output_jar_this_project" value="MetagomicsSharedCode.jar"/>
 
 	<property name="src" value="src" />
 	<property name="classes" value="classes" />
-	<!-- <property name="lib_local" value="lib" /> --> <!-- lib in this project -->
-	<property name="lib_pipeline_shared" value="../../metagomics-shared-libs" /> <!-- shared libs -->
-	<property name="lib_metagomics_shared_code_jar_dir" value="../../metagomics-shared-code/deploy" /> <!-- jar from metagomics-shared-code -->
+	<property name="lib" value="../metagomics-shared-libs" />	
+	
+	<property name="deploy" value="deploy" />	
+	
 
-	<available file="../../../.git" type="dir" property="git.present"/>
+	<available file="../../.git" type="dir" property="git.present"/>
 	
 
 	
-	<property name="aa_Ant_Config__dir_name" value="../../../aa_Ant_Config" />
+	<property name="aa_Ant_Config__dir_name" value="../../aa_Ant_Config" />
 
 	
 	<property name="path_to__aa_Ant_Config" value="${aa_Ant_Config__dir_name}" />
@@ -57,99 +48,11 @@
 	<!-- This does not fail if the file is not found -->
 	<property file="${overall_build_config.properties__file_with_path}" />
 	
-	
-    <target name="create_run_jar"  depends="create_jar_this_project">
-
-    	<!-- Add the jars in the 'lib_local' folder to the class path   -->
-    	<!--
-		<path id="build.classpath__lib_local">
-		  <fileset dir="${lib_local}">
-		    <include name="**/*.jar" />
-		  </fileset>
-		</path>
-		-->
-		<!-- convert classpath to a flat list/string for use in manifest task -->
-    	<!--
-		<pathconvert property="jars.classpath__lib_local" pathsep=" ">
-		    <path refid="build.classpath__lib_local" />
-		    <flattenmapper />
-		</pathconvert>
-		-->
-    	
-    	<!--  Since lib_local commented out -->
-    	<property name="jars.classpath__lib_local" value="" />
-    	
-
-    	<!-- Add the jars in the 'lib_pipeline_shared' folder to the class path   -->
-    	
-		<path id="build.classpath__lib_pipeline_shared">
-		  <fileset dir="${lib_pipeline_shared}">
-		    <include name="**/*.jar" />
-		  </fileset>
-		</path>
-
-		<!-- convert classpath to a flat list/string for use in manifest task -->
-		<pathconvert property="jars.classpath__lib_pipeline_shared" pathsep=" ">
-		    <path refid="build.classpath__lib_pipeline_shared" />
-		    <flattenmapper />
-		</pathconvert>
-
-    	<!-- Add the jars in the 'lib_metagomics_shared_code_jar_dir' folder to the class path   -->
-    	
-		<path id="build.classpath__lib_metagomics_shared_code_jar_dir">
-		  <fileset dir="${lib_metagomics_shared_code_jar_dir}">
-		    <include name="**/*.jar" />
-		  </fileset>
-		</path>
-
-		<!-- convert classpath to a flat list/string for use in manifest task -->
-		<pathconvert property="jars.classpath__lib_metagomics_shared_code_jar_dir" pathsep=" ">
-		    <path refid="build.classpath__lib_metagomics_shared_code_jar_dir" />
-		    <flattenmapper />
-		</pathconvert>
-    	
-    	
-
-    	<property name="final.classpath" value="./ ${output_jar_this_project} ${jars.classpath__lib_local} ${jars.classpath__lib_pipeline_shared} ${jars.classpath__lib_metagomics_shared_code_jar_dir} "/>
-    	
-    	
-    	
-		<echo >Classpath for runnable jar ${final.classpath}</echo>
-    	
-    	
-        <jar destfile="deploy/${output_runnable_jar}">
-
-    	
-            <manifest>
-                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
-                <attribute name="Rsrc-Main-Class" 
-                		value="${jar.main.class}"/>
-                <attribute name="Class-Path" value="."/>
-                <attribute name="Rsrc-Class-Path" value="${final.classpath}"/>
-
-            	<attribute name="GIT-last-tag-commit-hash" value="${git.last.tag.and.commit.hash}"/>
-            	<attribute name="GIT-commit-hash" value="${git.last.commit.hash}"/>
-    			
-				<attribute name="Date" value="${build-info.current-date}" />
-				<attribute name="Time" value="${build-info.current-time}" />
-
-            </manifest>
-            <zipfileset src="jar-in-jar-loader.zip"/>
-            <zipfileset dir="${jar_this_project_dir}" />
-        	<!--
-        	<zipfileset dir="${lib_local}" />
-        	-->
-        	<zipfileset dir="${lib_pipeline_shared}" />
-        	<zipfileset dir="${lib_metagomics_shared_code_jar_dir}" />
-        	
-        </jar>
-    </target>
-	
 
 
     <target name="create_jar_this_project"  depends="compile,prepare,git.revision">
     	
-        <jar destfile="${jar_this_project_dir}/${output_jar_this_project}">
+        <jar destfile="${deploy}/${output_jar_this_project}">
 
 	        <manifest>
 	            <attribute name="Main-Class" value="${jar.main.class}"/>
@@ -232,8 +135,6 @@
       <mkdir  dir="${classes}"/>
       <delete dir="${deploy}" />
       <mkdir  dir="${deploy}"/>
-    	<delete dir="${jar_this_project_dir}"/>
-    	<mkdir  dir="${jar_this_project_dir}"/>
     </target>
 	
 	<!-- ================================================================================== -->
@@ -268,17 +169,9 @@
 	
 	<!-- classpath  -->
     <path id="compile.classpath">
-	<!--
-    	<fileset dir="${lib_local}">
+    	<fileset dir="${lib}">
         	<include name="**/*.jar"/>
       	</fileset>
-     -->
-    	<fileset dir="${lib_pipeline_shared}">
-        	<include name="**/*.jar"/>
-      	</fileset>
-    	<fileset dir="${lib_metagomics_shared_code_jar_dir}">
-    	<include name="**/*.jar"/>
-  	</fileset>
     </path>
 			
 </project>

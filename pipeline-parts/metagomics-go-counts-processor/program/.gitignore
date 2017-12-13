@@ -1,1 +1,7 @@
 /bin/
+bin
+.project
+.classpath
+classes
+deploy
+jar_this_project

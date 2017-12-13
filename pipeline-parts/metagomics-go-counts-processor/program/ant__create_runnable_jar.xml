@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="create_run_jar" name="metagomics-fasta-parser  Create Runnable Jar for Jar-in-Jar Loader">
+<project default="create_run_jar" name="metagomics-go-counts-processor  Create Runnable Jar for Jar-in-Jar Loader">
 
-	<property name="jar.main.class" value="org.uwpr.metagomics.fasta_importer.program.MainProgram" />
+	<property name="jar.main.class" value="org.uwpr.metagomics.go_counter.program.MainProgram" />
 
-	<property name="output_runnable_jar" value="MetagomicsFastaParser.jar"/>
+	<property name="output_runnable_jar" value="MetagomicsGOCountsProcessor.jar"/>
 
 
-	<property name="output_jar_this_project" value="MetagomicsFastaParser_MainCode.jar"/>
-
+	<property name="output_jar_this_project" value="MetagomicsGOCountsProcessor_MainCode.jar"/>
 
 	<property name="jar_this_project_dir" value="jar_this_project" />
 
@@ -15,7 +14,7 @@
 
 	<property name="src" value="src" />
 	<property name="classes" value="classes" />
-	<!-- <property name="lib_local" value="lib" /> --> <!-- lib in this project -->
+	<property name="lib_local" value="lib" /> <!-- lib in this project -->
 	<property name="lib_pipeline_shared" value="../../metagomics-shared-libs" /> <!-- shared libs -->
 	<property name="lib_metagomics_shared_code_jar_dir" value="../../metagomics-shared-code/deploy" /> <!-- jar from metagomics-shared-code -->
 
@@ -59,26 +58,20 @@
 	
 	
     <target name="create_run_jar"  depends="create_jar_this_project">
-
+    	
     	<!-- Add the jars in the 'lib_local' folder to the class path   -->
-    	<!--
+    	
 		<path id="build.classpath__lib_local">
 		  <fileset dir="${lib_local}">
 		    <include name="**/*.jar" />
 		  </fileset>
 		</path>
-		-->
+
 		<!-- convert classpath to a flat list/string for use in manifest task -->
-    	<!--
 		<pathconvert property="jars.classpath__lib_local" pathsep=" ">
 		    <path refid="build.classpath__lib_local" />
 		    <flattenmapper />
 		</pathconvert>
-		-->
-    	
-    	<!--  Since lib_local commented out -->
-    	<property name="jars.classpath__lib_local" value="" />
-    	
 
     	<!-- Add the jars in the 'lib_pipeline_shared' folder to the class path   -->
     	
@@ -113,7 +106,6 @@
     	<property name="final.classpath" value="./ ${output_jar_this_project} ${jars.classpath__lib_local} ${jars.classpath__lib_pipeline_shared} ${jars.classpath__lib_metagomics_shared_code_jar_dir} "/>
     	
     	
-    	
 		<echo >Classpath for runnable jar ${final.classpath}</echo>
     	
     	
@@ -136,9 +128,7 @@
             </manifest>
             <zipfileset src="jar-in-jar-loader.zip"/>
             <zipfileset dir="${jar_this_project_dir}" />
-        	<!--
         	<zipfileset dir="${lib_local}" />
-        	-->
         	<zipfileset dir="${lib_pipeline_shared}" />
         	<zipfileset dir="${lib_metagomics_shared_code_jar_dir}" />
         	
@@ -268,11 +258,9 @@
 	
 	<!-- classpath  -->
     <path id="compile.classpath">
-	<!--
     	<fileset dir="${lib_local}">
         	<include name="**/*.jar"/>
       	</fileset>
-     -->
     	<fileset dir="${lib_pipeline_shared}">
         	<include name="**/*.jar"/>
       	</fileset>

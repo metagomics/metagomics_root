@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="US-ASCII" ?>
+<project name="Metagomics_Root_Build_All" default="createInstallables" basedir=".">
+
+	<!--
+
+	  Ant build to build everything for Metagomics.
+
+	  Run the default target to build everything.
+
+	  If ant is installed and on the PATH,
+	  enter on the command line   "ant -f  ant__build_all_proxl.xml"
+	  in the base directory to build everything.
+
+	  -->
+
+
+	<!-- init depends on nothing -->
+	<target name="init">
+		<tstamp />
+
+		<!-- name of jar or whatever that is copied to deploy -->
+
+		<!-- Properties -->
+
+		
+	</target>
+
+	<!--   Not in any 'target'  -->
+		
+		<tstamp prefix="build-info">
+			<format property="current-date" pattern="d-MMMM-yyyy" locale="en" />
+			<format property="current-time" pattern="hh:mm:ss a z" locale="en" />
+			<format property="year-month-day" pattern="yyyy-MM-dd" locale="en" />
+		</tstamp>
+		
+
+	<!-- Clean depends on init -->
+	<target name="clean" depends="init">
+		<delete dir="deploy" />
+
+		<ant dir="pipeline-parts/metagomics-shared-code"
+			antfile="ant__create_jar.xml" target="clean" />
+		
+		<ant dir="pipeline-parts/metagomics-blast-results-parser/program"
+			antfile="ant__create_runnable_jar.xml" target="clean" />
+		<ant dir="pipeline-parts/metagomics-fasta-parser/program"
+			antfile="ant__create_runnable_jar.xml" target="clean" />
+		<ant dir="pipeline-parts/metagomics-go-counts-processor/program"
+			antfile="ant__create_runnable_jar.xml" target="clean" />
+		<ant dir="pipeline-parts/metagomics-peptide-count-upload-parser/program"
+			antfile="ant__create_runnable_jar.xml" target="clean" />
+		<ant dir="pipeline-parts/metagomics-run-blast-and-jc-wrapper/metagomics-run-blast"
+			antfile="ant__create_runnable_jar.xml" target="clean" />
+
+	</target>
+
+
+
+	<!-- Prepare depends on clean -->
+	<target name="prepare" depends="clean">
+		<mkdir dir="deploy" />
+	</target>
+
+	<!--
+		compileAllSubmodules depends on prepare
+		executes external builds for each sub project
+	 -->
+	<target name="compileAllSubmodules" depends="prepare">
+		
+		<ant dir="pipeline-parts/metagomics-shared-code"
+			antfile="ant__create_jar.xml" />
+		<ant dir="pipeline-parts/metagomics-blast-results-parser/program"
+			antfile="ant__create_runnable_jar.xml" />
+		<ant dir="pipeline-parts/metagomics-fasta-parser/program"
+			antfile="ant__create_runnable_jar.xml" />
+		<ant dir="pipeline-parts/metagomics-go-counts-processor/program"
+			antfile="ant__create_runnable_jar.xml" />
+		<ant dir="pipeline-parts/metagomics-peptide-count-upload-parser/program"
+			antfile="ant__create_runnable_jar.xml" />
+		<ant dir="pipeline-parts/metagomics-run-blast-and-jc-wrapper/metagomics-run-blast"
+			antfile="ant__create_runnable_jar.xml" />
+
+	</target>
+	
+
+	<!--
+		createInstallables depends on compileAllSubmodules
+	-->
+	<target name="createInstallables" depends="compileAllSubmodules">
+
+		<!-- copy files from subdir 'deploy' to deploy -->
+		<copy todir="deploy" >
+			<fileset dir="pipeline-parts/metagomics-blast-results-parser/program/deploy"/> 
+		</copy>
+		
+		<copy todir="deploy" >
+			<fileset dir="pipeline-parts/metagomics-fasta-parser/program"/> 
+		</copy>
+		<copy todir="deploy" >
+			<fileset dir="pipeline-parts/metagomics-go-counts-processor/program"/> 
+		</copy>
+		<copy todir="deploy" >
+			<fileset dir="pipeline-parts/metagomics-peptide-count-upload-parser/program"/> 
+		</copy>
+		<copy todir="deploy" >
+			<fileset dir="pipeline-parts/metagomics-run-blast-and-jc-wrapper/metagomics-run-blast"/> 
+		</copy>
+
+	</target>
+	
+</project>
