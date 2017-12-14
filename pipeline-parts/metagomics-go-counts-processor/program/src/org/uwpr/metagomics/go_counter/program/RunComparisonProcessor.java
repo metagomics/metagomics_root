@@ -408,6 +408,11 @@ public class RunComparisonProcessor {
 			
 			while( line != null ) {
 			
+				if( line.startsWith( "GO acc" ) ) {
+					line = br.readLine();
+					continue;
+				}
+				
 				if( line.startsWith( "#" ) ) {
 					line = br.readLine();
 					continue;
