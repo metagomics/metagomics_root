@@ -24,8 +24,23 @@ div.header-outer-container {
 	padding-bottom:65px;   /* Height of the footer element */
 }
 
+.bold-black {
+	font-weight:bold;
+	color:#000000;
+}
+
 div.header-logo-container {
-	
+	position:absolute;
+}
+
+div.header-right {
+	position: absolute;
+    right: 0px;
+    width: 400px;
+    border: 0px;
+    padding: 10px;
+    margin-right:15px;
+    text-align:right;
 }
 
 /*  lock the footer to the bottom of the page */

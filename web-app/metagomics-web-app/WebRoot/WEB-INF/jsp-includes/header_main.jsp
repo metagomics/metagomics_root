@@ -56,10 +56,12 @@ response.addHeader("Cache-control", "max-age=0"); // stale right away
 <div class="header-outer-container">
 
 	<div class="header-logo-container">
-	
 		<img src="${ contextPath }/images/header-logo.png" />
+	</div>
 	
-	
+	<div class="header-right bold-black">
+		<p>Version: BETA pre-release 0.1.0</p>
+		<p style="margin-top:100px;"><a style="color:#000000;" href="https://www.yeastrc.org/metagomics/demo/">View Demo Results</a></p>
 	</div>
 
 </div>
