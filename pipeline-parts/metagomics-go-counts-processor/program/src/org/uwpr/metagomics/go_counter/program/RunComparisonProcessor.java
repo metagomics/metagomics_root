@@ -323,7 +323,7 @@ public class RunComparisonProcessor {
 				
 				boolean createImages = false;
 				try {
-					if( Class.forName( "org.uwpr.local.graph_image.TwoRunGOGraphGenerator", false, null ) != null )
+					if( Class.forName( "org.uwpr.local.graph_image.TwoRunGOGraphGenerator", false, RunComparisonProcessor.class.getClassLoader() ) != null )
 						createImages = true;
 					
 				} catch( Exception e ) {
@@ -353,10 +353,10 @@ public class RunComparisonProcessor {
 			
 							try {
 								
-								Class<?> cls = Class.forName( "org.uwpr.local.graph_image.TwoRunGOGraphGenerator" );														
+								Class<?> cls = Class.forName( "org.uwpr.local.graph_image.TwoRunGOGraphGenerator", true, RunComparisonProcessor.class.getClassLoader() );														
 								Object obj = cls.newInstance();
 
-								Method method = cls.getDeclaredMethod( "getGOGraphImage", compareData.getClass() );
+								Method method = cls.getDeclaredMethod( "getGOGraphImage", compareData.getClass().getInterfaces()[0] );
 
 								BufferedImage image = (BufferedImage)method.invoke( obj, compareData );
 								
@@ -365,7 +365,7 @@ public class RunComparisonProcessor {
 							    
 							    imageFile = new File( dataDirectory, outputFilenameBase + "_" + aspect + ".svg" );
 							    
-								Method method2 = cls.getDeclaredMethod( "saveGOGraphSVGImage", compareData.getClass(), imageFile.getClass() );
+								Method method2 = cls.getDeclaredMethod( "saveGOGraphSVGImage", compareData.getClass().getInterfaces()[0], imageFile.getClass() );
 								method2.invoke( obj, compareData, imageFile );
 	
 							} catch ( Exception e ) {
@@ -407,6 +407,12 @@ public class RunComparisonProcessor {
 			line = br.readLine(); //skip header line
 			
 			while( line != null ) {
+			
+				if( line.startsWith( "#" ) ) {
+					line = br.readLine();
+					continue;
+				}
+				
 				
 				String[] fields = line.split( "\\t" );
 				

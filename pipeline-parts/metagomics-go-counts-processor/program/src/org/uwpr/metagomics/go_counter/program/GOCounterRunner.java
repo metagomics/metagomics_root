@@ -162,7 +162,7 @@ public class GOCounterRunner {
 			
 			boolean createImages = false;
 			try {
-				if( Class.forName( "org.uwpr.local.graph_image.SingleRunGOGraphGenerator", false, null ) != null )
+				if( Class.forName( "org.uwpr.local.graph_image.SingleRunGOGraphGenerator", false, this.getClass().getClassLoader() ) != null )
 					createImages = true;
 				
 			} catch( Exception e ) {
@@ -201,10 +201,10 @@ public class GOCounterRunner {
 						try {
 							// save off an image of the remaining GO tree
 							
-							Class<?> cls = Class.forName( "org.uwpr.local.graph_image.SingleRunGOGraphGenerator" );														
+							Class<?> cls = Class.forName( "org.uwpr.local.graph_image.SingleRunGOGraphGenerator", true, this.getClass().getClassLoader() );														
 							Object obj = cls.newInstance();
 
-							Method method = cls.getDeclaredMethod( "getGOGraphImage", data.getClass() );
+							Method method = cls.getDeclaredMethod( "getGOGraphImage", data.getClass().getInterfaces()[0] );
 
 							BufferedImage image = (BufferedImage)method.invoke( obj, data );
 							
@@ -213,7 +213,7 @@ public class GOCounterRunner {
 						    
 						    imageFile = new File( reportDirectory, "go_image_" + aspect + "_" + run.getId() + ".svg" );
 						    
-							Method method2 = cls.getDeclaredMethod( "saveGOGraphSVGImage", data.getClass(), imageFile.getClass() );
+							Method method2 = cls.getDeclaredMethod( "saveGOGraphSVGImage", data.getClass().getInterfaces()[0], imageFile.getClass() );
 							method2.invoke( obj, data, imageFile );
 						    	
 						} catch ( Exception e ) {
