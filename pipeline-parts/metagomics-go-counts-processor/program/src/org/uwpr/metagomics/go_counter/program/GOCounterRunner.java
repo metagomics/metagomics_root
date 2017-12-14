@@ -124,7 +124,7 @@ public class GOCounterRunner {
 				
 				fw = new FileWriter( reportFile );
 				
-				fw.write( "# MetaGOmics GO report" );
+				fw.write( "# MetaGOmics GO report\n" );
 				fw.write( "# MetaGOmics version: " + VersionUtils.getVersion() + "\n" );
 				fw.write( "# Run date: " + new java.util.Date() + "\n" );
 				

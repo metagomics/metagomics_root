@@ -227,7 +227,7 @@ public class RunComparisonProcessor {
 						
 						fw = new FileWriter( outputFile );
 						
-						fw.write( "# MetaGOmics GO comparison report" );
+						fw.write( "# MetaGOmics GO comparison report\n" );
 						fw.write( "# MetaGOmics version: " + VersionUtils.getVersion() + "\n" );
 						fw.write( "# Run date: " + new java.util.Date() + "\n" );
 						

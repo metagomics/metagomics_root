@@ -87,7 +87,7 @@ public class TaxonomyReportGenerator {
 				
 			fw = new FileWriter( reportFile );
 			
-			fw.write( "# MetaGOmics taxonomy report" );
+			fw.write( "# MetaGOmics taxonomy report\n" );
 			fw.write( "# MetaGOmics version: " + VersionUtils.getVersion() + "\n" );
 			fw.write( "# Run date: " + new java.util.Date() + "\n" );
 			
