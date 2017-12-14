@@ -18,6 +18,10 @@
 	<property name="lib_pipeline_shared" value="../../metagomics-shared-libs" /> <!-- shared libs -->
 	<property name="lib_metagomics_shared_code_jar_dir" value="../../metagomics-shared-code/deploy" /> <!-- jar from metagomics-shared-code -->
 
+	<property name="lib_metagomics_local_libs_jar_dir" value="../../metagomics-local-libs" /> <!-- jar from metagomics-local-libs -->
+
+	<property name="lib_metagomics_local_properties_jar_dir" value="../../metagomics-local-properties" /> <!-- properties from metagomics-local-libs -->
+
 	<available file="../../../.git" type="dir" property="git.present"/>
 	
 
@@ -102,8 +106,21 @@
 		</pathconvert>
     	
     	
+    	<!-- Add the jars in the 'lib_metagomics_local_libs_jar_dir' folder to the class path   -->
+    	
+		<path id="build.classpath__lib_metagomics_local_libs_jar_dir">
+		  <fileset dir="${lib_metagomics_local_libs_jar_dir}">
+		    <include name="**/*.jar" />
+		  </fileset>
+		</path>
 
-    	<property name="final.classpath" value="./ ${output_jar_this_project} ${jars.classpath__lib_local} ${jars.classpath__lib_pipeline_shared} ${jars.classpath__lib_metagomics_shared_code_jar_dir} "/>
+		<!-- convert classpath to a flat list/string for use in manifest task -->
+		<pathconvert property="jars.classpath__lib_metagomics_local_libs_jar_dir" pathsep=" ">
+		    <path refid="build.classpath__lib_metagomics_local_libs_jar_dir" />
+		    <flattenmapper />
+		</pathconvert>
+
+    	<property name="final.classpath" value="./ ${output_jar_this_project} ${jars.classpath__lib_local} ${jars.classpath__lib_pipeline_shared} ${jars.classpath__lib_metagomics_shared_code_jar_dir} ${jars.classpath__lib_metagomics_local_libs_jar_dir} "/>
     	
     	
 		<echo >Classpath for runnable jar ${final.classpath}</echo>
@@ -128,9 +145,18 @@
             </manifest>
             <zipfileset src="jar-in-jar-loader.zip"/>
             <zipfileset dir="${jar_this_project_dir}" />
-        	<zipfileset dir="${lib_local}" />
+        	<zipfileset dir="${lib_local}" >
+	    		<include name="**/*.jar" />
+        	</zipfileset>
         	<zipfileset dir="${lib_pipeline_shared}" />
         	<zipfileset dir="${lib_metagomics_shared_code_jar_dir}" />
+        	<zipfileset dir="${lib_metagomics_local_libs_jar_dir}" >
+        		<include name="**/*.jar" />
+        	</zipfileset>
+        	<zipfileset dir="${lib_metagomics_local_properties_jar_dir}" > 
+        		<exclude name="metagomics.db.properties.template" />
+        		<exclude name="README.md" />
+        	</zipfileset>
         	
         </jar>
     </target>
@@ -265,8 +291,11 @@
         	<include name="**/*.jar"/>
       	</fileset>
     	<fileset dir="${lib_metagomics_shared_code_jar_dir}">
-    	<include name="**/*.jar"/>
-  	</fileset>
+    		<include name="**/*.jar"/>
+  		</fileset>
+    	<fileset dir="${lib_metagomics_local_libs_jar_dir}">
+			<include name="**/*.jar"/>
+		</fileset>
     </path>
 			
 </project>
