@@ -47,21 +47,21 @@ public class GOCounterRunner {
 	public void runGOCounter( int runId ) throws Exception {
 
 		// a map of peptide sequence to PSM counts (or some other quantitation)
-		Map<String, Integer> peptideCounts = getPeptideCountsForRun( runId );
+		Map<String, Long> peptideCounts = getPeptideCountsForRun( runId );
 
 		// this map keyed on id instead, populated below
-		Map<Integer, Integer> peptideIdCounts = new HashMap<>();
+		Map<Integer, Long> peptideIdCounts = new HashMap<>();
 		
 		
 		// get total PSM count for run
-		int RUN_PSM_COUNT = 0;
+		long RUN_PSM_COUNT = 0;
 		
 		int fastaUploadId = FastaSearcher.getInstance().getFastaUploadIdForRun( runId );
 		
 		// process each peptide, build a count for all GO terms and save each
 		// peptide's association to a GO term for this run's fasta upload id (if not already in the db)
 		
-		Map<GONode, Integer> GO_NODE_COUNT_MAP = new HashMap<>();
+		Map<GONode, Long> GO_NODE_COUNT_MAP = new HashMap<>();
 		Map<GONode, Collection<Integer>> GO_NODE_PEPTIDE__ID_MAP = new HashMap<>();
 		
 		for( String peptideSequence : peptideCounts.keySet() ) {
@@ -69,7 +69,7 @@ public class GOCounterRunner {
 			RUN_PSM_COUNT+= peptideCounts.get( peptideSequence );
 			
 			int peptideId = PeptideDAO.getInstance().getIdForPeptideSequence( peptideSequence );
-			int count = peptideCounts.get( peptideSequence );
+			long count = peptideCounts.get( peptideSequence );
 			
 			peptideIdCounts.put( peptideId,  count );
 			
@@ -79,7 +79,7 @@ public class GOCounterRunner {
 				
 				// increment the count for this GO term by the number associated with this peptide
 				if( !GO_NODE_COUNT_MAP.containsKey( goNode ) )
-					GO_NODE_COUNT_MAP.put( goNode, 0 );
+					GO_NODE_COUNT_MAP.put( goNode, (long)0 );
 				
 				GO_NODE_COUNT_MAP.put( goNode, GO_NODE_COUNT_MAP.get( goNode ) + count );
 
@@ -97,7 +97,7 @@ public class GOCounterRunner {
 		
 		// save each GO term's count and ratio to the database for this run
 		for( GONode node : GO_NODE_COUNT_MAP.keySet() ) {
-			int count = GO_NODE_COUNT_MAP.get( node );
+			long count = GO_NODE_COUNT_MAP.get( node );
 			double ratio = (double)count / (double)RUN_PSM_COUNT;
 			
 			GOAssociationSaver.getInstance().saveGOToRunAssocation( runId, node.getAcc(), count, ratio);
@@ -262,9 +262,9 @@ public class GOCounterRunner {
 	 * @return
 	 * @throws Exception
 	 */
-	private Map<String, Integer> getPeptideCountsForRun( int runId ) throws Exception {
+	private Map<String, Long> getPeptideCountsForRun( int runId ) throws Exception {
 		
-		Map<String, Integer> peptideCounts = new HashMap<>();
+		Map<String, Long> peptideCounts = new HashMap<>();
 		
 		File peptideCountsFile = new File( Constants.UPLOAD_RUN_TEMP_DIRECTORY, runId + ".txt" );
 		
@@ -285,11 +285,11 @@ public class GOCounterRunner {
 				String[] fields = line.split( "\\t" );
 				
 				String peptide = null;
-				Integer count = null;
+				Long count = null;
 				
 				try {
 					peptide = fields[ 0 ];
-					count = Integer.parseInt( fields[ 1 ] );
+					count = Long.parseLong( fields[ 1 ] );
 				} catch (Exception e) {
 					// just skip lines that can't be parsed
 					

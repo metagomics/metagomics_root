@@ -9,7 +9,7 @@ public class GOAssociationSaver {
 
 	public static GOAssociationSaver getInstance() { return new GOAssociationSaver(); }
 	
-	public void saveGOToRunAssocation( int runId, String goAcc, int count, double ratio ) throws Exception {
+	public void saveGOToRunAssocation( int runId, String goAcc, long count, double ratio ) throws Exception {
 
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -23,7 +23,7 @@ public class GOAssociationSaver {
 			pstmt = conn.prepareStatement( sql );
 			pstmt.setInt( 1, runId );
 			pstmt.setString( 2, goAcc );
-			pstmt.setInt( 3, count );
+			pstmt.setLong( 3, count );
 			pstmt.setDouble( 4, ratio );
 			
 			pstmt.executeUpdate();
