@@ -131,10 +131,10 @@ public class RunComparisonProcessor {
 						trgo.setRun1( run1 );
 						trgo.setRun2( run2 );
 						
-						int count1 = 0;
+						long count1 = 0;
 						if( ob1 != null ) { count1 = ob1.getCount(); }
 						
-						int count2 = 0;
+						long count2 = 0;
 						if( ob2 != null ) { count2 = ob2.getCount(); }
 
 						// set the log2-fold change
@@ -164,11 +164,11 @@ public class RunComparisonProcessor {
 						// set the laplacian-corrected values
 						{
 
-							int lcount1 = count1 + 1;
-							int lcount2 = count2 + 1;
+							long lcount1 = count1 + 1;
+							long lcount2 = count2 + 1;
 							
-							int ltotal1 = run1.getTotalPSMCount() + totalGOTermsTested;
-							int ltotal2 = run2.getTotalPSMCount() + totalGOTermsTested;
+							long ltotal1 = run1.getTotalPSMCount() + totalGOTermsTested;
+							long ltotal2 = run2.getTotalPSMCount() + totalGOTermsTested;
 							
 							double lratio1 = (double)lcount1 / (double)ltotal1;
 							double lratio2 = (double)lcount2 / (double)ltotal2;
@@ -260,10 +260,10 @@ public class RunComparisonProcessor {
 								SingleRunGraphOb ob1 = trgo.getOb1();
 								SingleRunGraphOb ob2 = trgo.getOb2();
 								
-								int count1 = 0;
+								long count1 = 0;
 								if( ob1 != null ) { count1 = ob1.getCount(); }
 								
-								int count2 = 0;
+								long count2 = 0;
 								if( ob2 != null ) { count2 = ob2.getCount(); }
 								
 								Double ratio1 = 0.0;
@@ -422,8 +422,8 @@ public class RunComparisonProcessor {
 				String[] fields = line.split( "\\t" );
 				
 				String goAcc = fields[ 0 ];
-				int count = Integer.parseInt( fields[ 3 ] );
-				int totalCount = Integer.parseInt( fields[ 4 ] );
+				long count = Long.parseLong( fields[ 3 ] );
+				long totalCount = Long.parseLong( fields[ 4 ] );
 				double ratio = Double.parseDouble( fields[ 5 ] );
 				
 				otherRun.setTotalPSMCount( totalCount );

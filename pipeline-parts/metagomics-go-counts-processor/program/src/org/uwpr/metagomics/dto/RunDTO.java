@@ -48,10 +48,10 @@ public class RunDTO {
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}
-	public int getTotalPSMCount() {
+	public long getTotalPSMCount() {
 		return totalPSMCount;
 	}
-	public void setTotalPSMCount(int totalPSMCount) {
+	public void setTotalPSMCount(long totalPSMCount) {
 		this.totalPSMCount = totalPSMCount;
 	}
 
@@ -62,6 +62,6 @@ public class RunDTO {
 	private boolean isProcessed;
 	private DateTime uploadDate;
 	private String filename;
-	private int totalPSMCount;
+	private long totalPSMCount;
 	
 }
