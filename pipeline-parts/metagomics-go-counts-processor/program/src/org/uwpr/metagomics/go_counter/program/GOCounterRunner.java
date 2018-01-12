@@ -132,7 +132,7 @@ public class GOCounterRunner {
 				
 				
 				for( GONode node : GO_NODE_COUNT_MAP.keySet() ) {
-					int count = GO_NODE_COUNT_MAP.get( node );
+					long count = GO_NODE_COUNT_MAP.get( node );
 					double ratio = (double)count / (double)RUN_PSM_COUNT;
 					
 					fw.write( node.getAcc() + "\t" );
@@ -178,7 +178,7 @@ public class GOCounterRunner {
 					
 					Map<String, SingleRunGraphOb> data = THE_DATA.get( node.getTermType() );
 					
-					int count = GO_NODE_COUNT_MAP.get( node );
+					long count = GO_NODE_COUNT_MAP.get( node );
 					double ratio = (double)count / (double)RUN_PSM_COUNT;
 					
 					SingleRunGraphOb ob = new SingleRunGraphOb();

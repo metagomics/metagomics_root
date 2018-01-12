@@ -8,7 +8,7 @@ import org.uwpr.metaproteomics.emma.go.GOSearchUtils;
 public class SingleRunGraphOb {
 
 	private double ratio;
-	private int count;
+	private long count;
 	private GONode node;
 	private Collection<GONode> parents;
 	private double runPsmTotal;
@@ -19,10 +19,10 @@ public class SingleRunGraphOb {
 	public void setRatio(double ratio) {
 		this.ratio = ratio;
 	}
-	public int getCount() {
+	public long getCount() {
 		return count;
 	}
-	public void setCount(int count) {
+	public void setCount(long count) {
 		this.count = count;
 	}
 	public GONode getNode() {
