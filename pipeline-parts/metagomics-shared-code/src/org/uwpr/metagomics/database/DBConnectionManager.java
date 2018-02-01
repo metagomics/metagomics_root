@@ -13,7 +13,7 @@ public class DBConnectionManager {
 
 	public static final String DB = "metagomics";
 	public static final String GO_DB = "mygo_201512";	
-	public static final String GO_ANNO_DB = "compgo_uniprot";	
+	public static final String GO_ANNO_DB = "compgo_uniprot_201802";	
 	public static final String TAXONOMY_DB = "ncbi_taxonomy_201611";
 	public static final String UNIPROT_TAXON_LOOKUP = "uniprot_taxa";	
 
