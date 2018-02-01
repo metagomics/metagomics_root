@@ -23,9 +23,9 @@ public class TaxonomyReportGenerator {
 	public static TaxonomyReportGenerator getInstance() { return new TaxonomyReportGenerator(); }
 	
 	public void generateTaxonomyReport( int runId,
-										int totalSpectra,
-										Map<Integer, Integer> peptideCounts,
-										Map<GONode, Integer> GO_NODE_COUNT_MAP,
+										long totalSpectra,
+										Map<Integer, Long> peptideCounts,
+										Map<GONode, Long> GO_NODE_COUNT_MAP,
 										Map<GONode, Collection<Integer>> GO_NODE_PEPTIDE__ID_MAP ) throws Exception  {
 		
 		/*
@@ -33,11 +33,11 @@ public class TaxonomyReportGenerator {
 		 * common taxonomic unit for all proteins matching to that peptide, and increment the spectral
 		 * counts for those taxa by the spectral count for the peptide.
 		 */
-		Map<GONode, Map<NCBITaxonomyNode, Integer>> GO_TAXON_COUNTS = new HashMap<>();
+		Map<GONode, Map<NCBITaxonomyNode, Long>> GO_TAXON_COUNTS = new HashMap<>();
 				
 		for( GONode node : GO_NODE_COUNT_MAP.keySet() ) {
 						
-			Map<NCBITaxonomyNode, Integer> taxonomyCountsForThisGOTerm = new HashMap<>();
+			Map<NCBITaxonomyNode, Long> taxonomyCountsForThisGOTerm = new HashMap<>();
 			
 			for( int peptideId : GO_NODE_PEPTIDE__ID_MAP.get( node ) ) {
 				
@@ -48,7 +48,7 @@ public class TaxonomyReportGenerator {
 				
 				for( NCBITaxonomyNode taxonNode : taxa ) {
 					
-					int count = peptideCounts.get( peptideId );
+					long count = peptideCounts.get( peptideId );
 					
 					if( taxonomyCountsForThisGOTerm.containsKey( taxonNode ) ) {
 						count += taxonomyCountsForThisGOTerm.get( taxonNode );
@@ -95,7 +95,7 @@ public class TaxonomyReportGenerator {
 				
 				
 			for( GONode node : GO_TAXON_COUNTS.keySet() ) {
-				int go_count = GO_NODE_COUNT_MAP.get( node );
+				long go_count = GO_NODE_COUNT_MAP.get( node );
 					
 					
 				for( NCBITaxonomyNode taxonNode : GO_TAXON_COUNTS.get( node ).keySet() ) {
@@ -108,7 +108,7 @@ public class TaxonomyReportGenerator {
 					fw.write( taxonNode.getId() + "\t" );
 					fw.write( taxonNode.getRank() + "\t" );
 					
-					int go_taxon_count = GO_TAXON_COUNTS.get( node ).get( taxonNode );
+					long go_taxon_count = GO_TAXON_COUNTS.get( node ).get( taxonNode );
 					
 					fw.write( go_taxon_count + "\t" );
 					fw.write( ( (double)go_taxon_count / (double)go_count ) + "\t" );

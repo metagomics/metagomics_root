@@ -10,7 +10,7 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 
 public class StatsUtils {
 
-	public static double proportionTest( int count1, int n1, int count2, int n2 ) {
+	public static double proportionTest( long count1, long n1, long count2, long n2 ) {
 		
 		/*
 		System.err.println( "Test:" );
