@@ -29,7 +29,8 @@
 
 	<div class="form-item">
 	Uniprot database: <input type="radio" name="annotationDatabase" style="font-size:19pt;" value="1" checked></input> Uniprot sprot
-					  <input type="radio" name="annotationDatabase" style="font-size:19pt;" value="2"></input> Uniprot trembl
+					<input type="radio" name="annotationDatabase" style="font-size:19pt;" value="2"></input> Uniprot trembl
+					<input type="radio" name="annotationDatabase" style="font-size:19pt;" value="3"></input> Uniprot sprot+trembl (bacterial only)
 	</div>
 
 
