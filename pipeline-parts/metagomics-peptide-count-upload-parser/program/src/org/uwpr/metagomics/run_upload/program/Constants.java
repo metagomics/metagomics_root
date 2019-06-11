@@ -32,11 +32,12 @@ public class Constants {
 		BLAST_DATABASE_DISPLAY_NAMES = new HashMap<>();
 		BLAST_DATABASE_DISPLAY_NAMES.put( 1, "Uniprot sprot" );
 		BLAST_DATABASE_DISPLAY_NAMES.put( 2, "Uniprot trembl" );
-		
+		BLAST_DATABASE_DISPLAY_NAMES.put( 3, "Uniprot sprot+trembl (bacteria only)" );
+
 		
 		BLAST_DATABASE_BLAST_NAMES = new HashMap<>();
-		BLAST_DATABASE_BLAST_NAMES.put( 1, "metago_uniprot_sprot" );
-		BLAST_DATABASE_BLAST_NAMES.put( 2, "uniprot_sprot.fasta" );
+		BLAST_DATABASE_BLAST_NAMES.put( 1, "uniprot_sprot.fasta" );
+		BLAST_DATABASE_BLAST_NAMES.put( 2, "uniprot_trembl.fasta" );
 		BLAST_DATABASE_BLAST_NAMES.put( 3, "uniprot-bacteria.fasta" );
 	}
 }
