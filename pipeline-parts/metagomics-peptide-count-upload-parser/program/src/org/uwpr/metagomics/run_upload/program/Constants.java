@@ -36,6 +36,7 @@ public class Constants {
 		
 		BLAST_DATABASE_BLAST_NAMES = new HashMap<>();
 		BLAST_DATABASE_BLAST_NAMES.put( 1, "metago_uniprot_sprot" );
-		BLAST_DATABASE_BLAST_NAMES.put( 2, "metago_uniprot_trembl" );
+		BLAST_DATABASE_BLAST_NAMES.put( 2, "uniprot_sprot.fasta" );
+		BLAST_DATABASE_BLAST_NAMES.put( 3, "uniprot-bacteria.fasta" );
 	}
 }
