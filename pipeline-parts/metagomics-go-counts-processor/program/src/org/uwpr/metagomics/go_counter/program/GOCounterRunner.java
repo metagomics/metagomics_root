@@ -23,12 +23,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.uwpr.metagomics.dto.RunDTO;
 import org.uwpr.metagomics.dto.UploadedFastaFileDTO;
-import org.uwpr.metagomics.go_counter.database.FastaSearcher;
-import org.uwpr.metagomics.go_counter.database.GOAssociationSaver;
-import org.uwpr.metagomics.go_counter.database.GOSearcher;
-import org.uwpr.metagomics.go_counter.database.PeptideDAO;
-import org.uwpr.metagomics.go_counter.database.RunDAO;
-import org.uwpr.metagomics.go_counter.database.UploadedFastaFileDAO;
+import org.uwpr.metagomics.go_counter.database.*;
 import org.uwpr.metagomics.utils.VersionUtils;
 import org.uwpr.metaproteomics.emma.go.GONode;
 
@@ -55,15 +50,17 @@ public class GOCounterRunner {
 		
 		// get total PSM count for run
 		long RUN_PSM_COUNT = 0;
-		
+
 		int fastaUploadId = FastaSearcher.getInstance().getFastaUploadIdForRun( runId );
-		
+		int fastaFileId = FastaSearcher.getInstance().getFastaFileIdForRun( runId );
+
 		// process each peptide, build a count for all GO terms and save each
 		// peptide's association to a GO term for this run's fasta upload id (if not already in the db)
 		
 		Map<GONode, Long> GO_NODE_COUNT_MAP = new HashMap<>();
 		Map<GONode, Collection<Integer>> GO_NODE_PEPTIDE__ID_MAP = new HashMap<>();
-		
+		Map<Integer, String> PEPTIDE_ID_SEQUENCE_MAP = new HashMap<>();
+
 		for( String peptideSequence : peptideCounts.keySet() ) {
 			
 			RUN_PSM_COUNT+= peptideCounts.get( peptideSequence );
@@ -72,7 +69,8 @@ public class GOCounterRunner {
 			long count = peptideCounts.get( peptideSequence );
 			
 			peptideIdCounts.put( peptideId,  count );
-			
+			PEPTIDE_ID_SEQUENCE_MAP.put(peptideId, peptideSequence);
+
 			Collection<GONode> peptideGONodes = GOSearcher.getInstance().getAllGONodesForPeptide( peptideId, runId );
 			
 			for( GONode goNode : peptideGONodes ) {
@@ -90,7 +88,6 @@ public class GOCounterRunner {
 					GO_NODE_PEPTIDE__ID_MAP.put( goNode, new HashSet<>() );
 				
 				GO_NODE_PEPTIDE__ID_MAP.get( goNode ).add( peptideId );
-				
 			}
 		}
 		
@@ -128,7 +125,7 @@ public class GOCounterRunner {
 				fw.write( "# MetaGOmics version: " + VersionUtils.getVersion() + "\n" );
 				fw.write( "# Run date: " + new java.util.Date() + "\n" );
 				
-				fw.write( "GO acc\tGO aspect\tGO name\tcount\ttotal count\tratio\n" );
+				fw.write( "GO acc\tGO aspect\tGO name\tcount\ttotal count\tratio\tpeptides\tproteins\n" );
 				
 				
 				for( GONode node : GO_NODE_COUNT_MAP.keySet() ) {
@@ -140,7 +137,9 @@ public class GOCounterRunner {
 					fw.write( node.getName() + "\t" );
 					fw.write( count + "\t" );
 					fw.write( RUN_PSM_COUNT + "\t" );
-					fw.write( ratio + "\n" );
+					fw.write( ratio + "\t" );
+					fw.write( String.join(",", this.getPeptideSequencesForPeptideIds(GO_NODE_PEPTIDE__ID_MAP.get(node), PEPTIDE_ID_SEQUENCE_MAP)) + "\t" );
+					fw.write( String.join(",", this.getProteinNamesForPeptides(GO_NODE_PEPTIDE__ID_MAP.get(node), fastaFileId)) + "\n" );
 				}
 				
 			} finally {
@@ -231,8 +230,7 @@ public class GOCounterRunner {
 		// generate and save GO image and report for all comparisons for this fasta upload to disk
 		RunComparisonProcessor.generateRunComparisons( THE_DATA, run, upload);
 		
-		
-		
+
 		// contact web service on the metagomics server to mark run complete and notify submittors
 		HttpClient client = null;
 		HttpPost post = null;
@@ -253,9 +251,30 @@ public class GOCounterRunner {
 			throw e;
 		}
 		
-		
 	}
-	
+
+	private Collection<String> getPeptideSequencesForPeptideIds(Collection<Integer> peptideIds, Map<Integer, String> PEPTIDE_ID_SEQUENCE_MAP) {
+
+		Collection<String> sequences = new HashSet<>();
+
+		for(int peptideId : peptideIds ) {
+			sequences.add(PEPTIDE_ID_SEQUENCE_MAP.get(peptideId));
+		}
+
+		return sequences;
+	}
+
+	private Collection<String> getProteinNamesForPeptides(Collection<Integer> peptideIds, int fastaFileId) throws Exception {
+
+		Collection<String> names = new HashSet<>();
+
+		for(int peptideId : peptideIds) {
+			names.addAll(ProteinSearcher.getInstance().getProteinsNamesForPeptide(peptideId, fastaFileId));
+		}
+
+		return names;
+	}
+
 	/**
 	 * Get all peptides and PSM counts for those peptides from the file on disk.
 	 * @param runId

@@ -72,5 +72,59 @@ public class ProteinSearcher {
 		
 		return proteinIds;		
 	}
+
+
+	public Collection<String> getProteinsNamesForPeptide( int peptideId, int fastaFileId ) throws Exception {
+
+
+		Collection<String> proteinNames = ProteinNameSearcherCache.getInstance().getProteinNamesFromCache( fastaFileId, peptideId );
+		if( proteinNames != null )
+			return proteinNames;
+
+		proteinNames = new HashSet<>();
+
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		String sql = "SELECT b.name FROM peptide_protein_fasta_map AS a INNER JOIN fasta_file_protein_sequence AS b ON a.fasta_file_id = b.fasta_file_id AND a.protein_sequence_id = b.protein_sequence_id WHERE a.fasta_file_id = ? AND a.peptide_id = ?";
+
+		try {
+
+			conn = DBConnectionManager.getInstance().getConnection( DBConnectionManager.DB );
+
+			pstmt = conn.prepareStatement( sql );
+			pstmt.setInt( 1, fastaFileId );
+			pstmt.setInt( 2, peptideId );
+
+			rs = pstmt.executeQuery();
+
+			while( rs.next() ) {
+				proteinNames.add( rs.getString( 1 ) );
+			}
+
+		} finally {
+
+			// be sure database handles are closed
+			if( rs != null ) {
+				try { rs.close(); } catch( Throwable t ) { ; }
+				rs = null;
+			}
+
+			if( pstmt != null ) {
+				try { pstmt.close(); } catch( Throwable t ) { ; }
+				pstmt = null;
+			}
+
+			if( conn != null ) {
+				try { conn.close(); } catch( Throwable t ) { ; }
+				conn = null;
+			}
+		}
+
+		ProteinNameSearcherCache.getInstance().addToCache( fastaFileId, peptideId, proteinNames );
+
+		return proteinNames;
+	}
 	
 }
