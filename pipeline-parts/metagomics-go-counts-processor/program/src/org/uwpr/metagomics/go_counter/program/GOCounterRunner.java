@@ -111,6 +111,8 @@ public class GOCounterRunner {
 		if( !reportDirectory.exists() ) {
 			reportDirectory.mkdir();
 		}
+
+		Map<String, HashMap<String, Collection<String>>> proteinInfoForGoNodes = new HashMap<>();
 		
 		// save go text report to disk
 		{			
@@ -137,8 +139,15 @@ public class GOCounterRunner {
 					fw.write( count + "\t" );
 					fw.write( RUN_PSM_COUNT + "\t" );
 					fw.write( ratio + "\t" );
-					fw.write( String.join(",", this.getPeptideSequencesForPeptideIds(GO_NODE_PEPTIDE__ID_MAP.get(node), PEPTIDE_ID_SEQUENCE_MAP)) + "\t" );
-					fw.write( String.join(",", this.getBlastHitsForPeptides(GO_NODE_PEPTIDE__ID_MAP.get(node), fastaUploadId, fastaFileId)) + "\n" );
+
+					proteinInfoForGoNodes.put(node.getAcc(), new HashMap<>());
+					proteinInfoForGoNodes.get(node.getAcc()).put("peptides", this.getPeptideSequencesForPeptideIds(GO_NODE_PEPTIDE__ID_MAP.get(node), PEPTIDE_ID_SEQUENCE_MAP));
+					proteinInfoForGoNodes.get(node.getAcc()).put("proteins", this.getProteinNamesForPeptides(GO_NODE_PEPTIDE__ID_MAP.get(node), fastaFileId));
+					proteinInfoForGoNodes.get(node.getAcc()).put("blastHits", this.getBlastHitsForPeptides(GO_NODE_PEPTIDE__ID_MAP.get(node), fastaUploadId, fastaFileId));
+
+					fw.write( String.join(",", proteinInfoForGoNodes.get(node.getAcc()).get("peptides")) + "\t" );
+					fw.write( String.join(",", proteinInfoForGoNodes.get(node.getAcc()).get("proteins")) + "\t" );
+					fw.write( String.join(",", proteinInfoForGoNodes.get(node.getAcc()).get("blastHits")) + "\n" );
 				}
 				
 			} finally {
@@ -227,7 +236,7 @@ public class GOCounterRunner {
 		
 		
 		// generate and save GO image and report for all comparisons for this fasta upload to disk
-		RunComparisonProcessor.generateRunComparisons( THE_DATA, run, upload);
+		RunComparisonProcessor.generateRunComparisons( THE_DATA, run, upload, proteinInfoForGoNodes);
 		
 
 		// contact web service on the metagomics server to mark run complete and notify submittors

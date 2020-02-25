@@ -7,12 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,7 +23,7 @@ import org.uwpr.metaproteomics.emma.go.GONodeFactory;
 
 public class RunComparisonProcessor {
 
-	public static void generateRunComparisons( Map<String, Map<String, SingleRunGraphOb>> data, RunDTO run, UploadedFastaFileDTO upload ) throws Exception {
+	public static void generateRunComparisons( Map<String, Map<String, SingleRunGraphOb>> data, RunDTO run, UploadedFastaFileDTO upload, Map<String, HashMap<String, Collection<String>>> proteinInfoForGoNodes ) throws Exception {
 		
 		System.out.println( "Calling generateRunComparisons..." );
 		
@@ -75,8 +70,8 @@ public class RunComparisonProcessor {
 				
 				String outputFilenameBase = getOutputFileName( run.getId(), otherRunId );
 
-				Map<String, Map<String, SingleRunGraphOb>> otherData = getDataFromOtherFile( previousAnalysisFile, otherRun );				
-				
+				Map<String, Map<String, SingleRunGraphOb>> otherData = getDataFromOtherFile( previousAnalysisFile, otherRun );
+				Map<String, HashMap<String, Collection<String>>> otherProteinData = getProteinDataFromOtherFile(previousAnalysisFile);
 				
 				// ensure we're also moving from lower run id to higher run id for comparisons
 				Map<String, Map<String, SingleRunGraphOb>> dataSet1 = null;
@@ -84,19 +79,30 @@ public class RunComparisonProcessor {
 				
 				RunDTO run1 = null;
 				RunDTO run2 = null;
-				
+
+				Map<String, HashMap<String, Collection<String>>> run1ProteinData = null;
+				Map<String, HashMap<String, Collection<String>>> run2ProteinData = null;
+
+
 				if( run.getId() < otherRunId ) {
 					dataSet1 = data;
 					dataSet2 = otherData;
 					
 					run1 = run;
 					run2 = otherRun;
+
+					run1ProteinData = proteinInfoForGoNodes;
+					run2ProteinData = otherProteinData;
+
 				} else {
 					dataSet2 = data;
 					dataSet1 = otherData;
 					
 					run2 = run;
 					run1 = otherRun;
+
+					run2ProteinData = proteinInfoForGoNodes;
+					run1ProteinData = otherProteinData;
 				}
 				
 				for( String aspect : aspects ) {
@@ -222,7 +228,7 @@ public class RunComparisonProcessor {
 
 					File outputFile = new File( dataDirectory, outputFilenameBase + ".txt" );
 					FileWriter fw = null;
-					
+
 					try {
 						
 						fw = new FileWriter( outputFile );
@@ -249,8 +255,14 @@ public class RunComparisonProcessor {
 						fw.write( "Laplace corr. Log(2) fold change\t");
 						fw.write( "Laplace corr. Raw p-value\t");
 						fw.write( "Laplace corr. Bonf. corr p-value\t");
-						fw.write( "Laplace corr. q-value\n" );
-						
+						fw.write( "Laplace corr. q-value\t" );
+						fw.write( "Run 1 peptides\t" );
+						fw.write( "Run 2 peptides\t" );
+						fw.write( "Run 1 proteins\t" );
+						fw.write( "Run 2 proteins\t" );
+						fw.write( "Run 1 blast hits\t" );
+						fw.write( "Run 2 blast hits\n" );
+
 						for( String aspect : aspects ) {
 							
 							for( String acc : COMPARE_DATA.get( aspect ).keySet() ) {
@@ -292,7 +304,37 @@ public class RunComparisonProcessor {
 								
 								fw.write( String.format( "%3.2E", trgo.getLaplacePvalue() ) + "\t" );
 								fw.write( String.format( "%3.2E", trgo.getLaplacePvalue_corr() ) + "\t" );
-								fw.write( String.format( "%3.2E", trgo.getLaplaceQvalue() ) + "\n" );
+								fw.write( String.format( "%3.2E", trgo.getLaplaceQvalue() ) + "\t" );
+
+								if(run1ProteinData != null && run1ProteinData.containsKey(trgo.getNode().getAcc()))
+									fw.write( String.join(",", run1ProteinData.get(trgo.getNode().getAcc()).get("peptides")) + "\t");
+								else
+									fw.write("\t");
+
+								if(run2ProteinData != null && run2ProteinData.containsKey(trgo.getNode().getAcc()))
+									fw.write( String.join(",", run2ProteinData.get(trgo.getNode().getAcc()).get("peptides")) + "\t");
+								else
+									fw.write("\t");
+
+								if(run1ProteinData != null && run1ProteinData.containsKey(trgo.getNode().getAcc()))
+									fw.write( String.join(",", run1ProteinData.get(trgo.getNode().getAcc()).get("proteins")) + "\t");
+								else
+									fw.write("\t");
+
+								if(run2ProteinData != null && run2ProteinData.containsKey(trgo.getNode().getAcc()))
+									fw.write( String.join(",", run2ProteinData.get(trgo.getNode().getAcc()).get("proteins")) + "\t");
+								else
+									fw.write("\t");
+
+								if(run1ProteinData != null && run1ProteinData.containsKey(trgo.getNode().getAcc()))
+									fw.write( String.join(",", run1ProteinData.get(trgo.getNode().getAcc()).get("blastHits")) + "\t");
+								else
+									fw.write("\t");
+
+								if(run2ProteinData != null && run2ProteinData.containsKey(trgo.getNode().getAcc()))
+									fw.write( String.join(",", run2ProteinData.get(trgo.getNode().getAcc()).get("blastHits")) + "\n");
+								else
+									fw.write("\t");
 
 							}							
 						}
@@ -461,7 +503,70 @@ public class RunComparisonProcessor {
 		
 		return otherData;
 	}
-	
+
+
+	private static Map<String, HashMap<String, Collection<String>>> getProteinDataFromOtherFile( File otherFile ) throws Exception {
+
+		System.out.println( "\t\t\tCalling getProteinDataFromOtherFile()..." );
+
+		Map<String, HashMap<String, Collection<String>>> proteinData = new HashMap<>();
+
+		BufferedReader br = null;
+
+		try {
+
+			br = new BufferedReader( new FileReader( otherFile ) );
+
+			String line = br.readLine();
+			line = br.readLine(); //skip header line
+
+			while( line != null ) {
+
+				if( line.startsWith( "GO acc" ) ) {
+					line = br.readLine();
+					continue;
+				}
+
+				if( line.startsWith( "#" ) ) {
+					line = br.readLine();
+					continue;
+				}
+
+
+				String[] fields = line.split( "\\t" );
+				if( fields.length != 9) {
+					// old style data, just return empty map
+					return proteinData;
+				}
+
+				String goAcc = fields[ 0 ];
+
+				Collection<String> peptides = Arrays.asList(fields[6].split(","));
+				Collection<String> proteins = Arrays.asList(fields[7].split(","));
+				Collection<String> blastHits = Arrays.asList(fields[8].split(","));
+
+				proteinData.put(goAcc, new HashMap<>());
+				proteinData.get(goAcc).put("peptides", peptides);
+				proteinData.get(goAcc).put("proteins", proteins);
+				proteinData.get(goAcc).put("blastHits", blastHits);
+
+				line = br.readLine();
+			}
+
+		} finally {
+
+			if( br != null ) {
+				try {
+					br.close();
+					br = null;
+				} catch( Exception e ) { ; }
+			}
+		}
+
+		return proteinData;
+	}
+
+
 	
 	private static String getOutputFileName( int r1, int r2 ) {
 		
