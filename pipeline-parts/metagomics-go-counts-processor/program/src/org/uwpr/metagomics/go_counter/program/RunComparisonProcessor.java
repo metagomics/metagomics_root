@@ -334,7 +334,7 @@ public class RunComparisonProcessor {
 								if(run2ProteinData != null && run2ProteinData.containsKey(trgo.getNode().getAcc()))
 									fw.write( String.join(",", run2ProteinData.get(trgo.getNode().getAcc()).get("blastHits")) + "\n");
 								else
-									fw.write("\t");
+									fw.write("\n");
 
 							}							
 						}
