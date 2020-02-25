@@ -125,9 +125,8 @@ public class GOCounterRunner {
 				fw.write( "# MetaGOmics version: " + VersionUtils.getVersion() + "\n" );
 				fw.write( "# Run date: " + new java.util.Date() + "\n" );
 				
-				fw.write( "GO acc\tGO aspect\tGO name\tcount\ttotal count\tratio\tpeptides\tproteins\n" );
-				
-				
+				fw.write( "GO acc\tGO aspect\tGO name\tcount\ttotal count\tratio\tpeptides\tinput proteins\tblast hits\n" );
+
 				for( GONode node : GO_NODE_COUNT_MAP.keySet() ) {
 					long count = GO_NODE_COUNT_MAP.get( node );
 					double ratio = (double)count / (double)RUN_PSM_COUNT;
@@ -139,7 +138,7 @@ public class GOCounterRunner {
 					fw.write( RUN_PSM_COUNT + "\t" );
 					fw.write( ratio + "\t" );
 					fw.write( String.join(",", this.getPeptideSequencesForPeptideIds(GO_NODE_PEPTIDE__ID_MAP.get(node), PEPTIDE_ID_SEQUENCE_MAP)) + "\t" );
-					fw.write( String.join(",", this.getProteinNamesForPeptides(GO_NODE_PEPTIDE__ID_MAP.get(node), fastaFileId)) + "\n" );
+					fw.write( String.join(",", this.getBlastHitsForPeptides(GO_NODE_PEPTIDE__ID_MAP.get(node), fastaUploadId, fastaFileId)) + "\n" );
 				}
 				
 			} finally {
@@ -274,6 +273,23 @@ public class GOCounterRunner {
 
 		return names;
 	}
+
+	private Collection<String> getBlastHitsForPeptides(Collection<Integer> peptideIds, int fastaUploadId, int fastaFileId) throws Exception {
+
+		Collection<String> blastHits = new HashSet<>();
+
+		Collection<Integer> proteinIds = new HashSet<>();
+		for(int peptideId : peptideIds) {
+			proteinIds.addAll(ProteinSearcher.getInstance().getProteinsForPeptide(peptideId, fastaFileId));
+		}
+
+		for(Integer proteinId : proteinIds) {
+			blastHits.addAll(BlastHitSearcher.getInstance().getBlastHitsForProteinInFastaUpload(proteinId, fastaUploadId));
+		}
+
+		return blastHits;
+	}
+
 
 	/**
 	 * Get all peptides and PSM counts for those peptides from the file on disk.
