@@ -61,7 +61,32 @@ public class TaxonomyReportGenerator {
 			GO_TAXON_COUNTS.put( node, taxonomyCountsForThisGOTerm );			
 		}
 
-		
+
+		// do the same as above, but for no GO term. that is, use all peptides to get total taxon count for all
+		// taxa regardless of go term
+
+		Map<NCBITaxonomyNode, Long> TOTAL_TAXON_COUNTS = new HashMap<>();
+
+		for( int peptideId : peptideCounts.keySet()) {
+
+			// get the common taxonomic unit + parents for this peptide
+			Collection<NCBITaxonomyNode> taxa = CommonTaxonomicUnitSearcher.getInstance().getCommonTaxonomicUnitAndAncestorsForPeptide( peptideId, runId );
+
+			if( taxa == null ) continue;	// probably the result of being unable to find any uniprot ids for the proteins matched by this peptide.
+
+			for( NCBITaxonomyNode taxonNode : taxa ) {
+
+				long count = peptideCounts.get( peptideId );
+
+				if( TOTAL_TAXON_COUNTS.containsKey( taxonNode ) ) {
+					count += TOTAL_TAXON_COUNTS.get( taxonNode );
+				}
+
+				TOTAL_TAXON_COUNTS.put( taxonNode, count );
+			}
+		}
+
+
 		/*
 		 * Can now output the report using the data gathered above
 		 */
@@ -99,23 +124,39 @@ public class TaxonomyReportGenerator {
 					
 					
 				for( NCBITaxonomyNode taxonNode : GO_TAXON_COUNTS.get( node ).keySet() ) {
-						
-					fw.write( node.getAcc() + "\t" );
-					fw.write( node.getTermType() + "\t" );
-					fw.write( node.getName() + "\t" );
-						
-					fw.write( NCBITaxonomyUtils.getScientificNameForNCBITaxonomyId( taxonNode.getId(), conn ) + "\t" );
-					fw.write( taxonNode.getId() + "\t" );
-					fw.write( taxonNode.getRank() + "\t" );
-					
-					long go_taxon_count = GO_TAXON_COUNTS.get( node ).get( taxonNode );
-					
-					fw.write( go_taxon_count + "\t" );
-					fw.write( ( (double)go_taxon_count / (double)go_count ) + "\t" );
-					fw.write( ( (double)go_taxon_count / (double)totalSpectra ) + "\n" );						
+
+					fw.write(node.getAcc() + "\t");
+					fw.write(node.getTermType() + "\t");
+					fw.write(node.getName() + "\t");
+
+					fw.write(NCBITaxonomyUtils.getScientificNameForNCBITaxonomyId(taxonNode.getId(), conn) + "\t");
+					fw.write(taxonNode.getId() + "\t");
+					fw.write(taxonNode.getRank() + "\t");
+
+					long go_taxon_count = GO_TAXON_COUNTS.get(node).get(taxonNode);
+
+					fw.write(go_taxon_count + "\t");
+					fw.write(((double) go_taxon_count / (double) go_count) + "\t");
+					fw.write(((double) go_taxon_count / (double) totalSpectra) + "\n");
 
 				}
-					
+			}
+
+			// handle Map<NCBITaxonomyNode, Long> TOTAL_TAXON_COUNTS
+			for(NCBITaxonomyNode taxonNode : TOTAL_TAXON_COUNTS.keySet()) {
+				long count = TOTAL_TAXON_COUNTS.get(taxonNode);
+
+				fw.write("n/a\t");
+				fw.write("n/a\t");
+				fw.write("n/a\t");
+
+				fw.write(NCBITaxonomyUtils.getScientificNameForNCBITaxonomyId(taxonNode.getId(), conn) + "\t");
+				fw.write(taxonNode.getId() + "\t");
+				fw.write(taxonNode.getRank() + "\t");
+
+				fw.write(count + "\t");
+				fw.write("\t");
+				fw.write(((double) count / (double) totalSpectra) + "\n");
 			}
 							
 		} finally {
