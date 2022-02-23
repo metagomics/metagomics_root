@@ -42,7 +42,7 @@ public class WebAppConstants {
 			? "F:\\tmp\\metagomics\\data_download\\"   // use this value if Windows
 					: "/data/metagomics/data_download/";             // use this value if not Windows
 	
-	public static final String VIEW_UPLOADED_FASTA_FILE_URL = "https://www.yeastrc.org/metagomics/viewUploadedFasta.do";
+	public static final String VIEW_UPLOADED_FASTA_FILE_URL = "https://meta.yeastrc.org/metagomics/viewUploadedFasta.do";
 	
 	
 	public static final Map<Integer, String> BLAST_DATABASE_DISPLAY_NAMES;
