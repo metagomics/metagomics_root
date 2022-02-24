@@ -27,7 +27,7 @@
 			<%--  'id' used by manage configuration to update this div with admin entered data --%>
 			<div id="footer-center-container" >
 
-			&copy; Copyright 2019<br>University of Washington
+			&copy; Copyright 2022<br>University of Washington
 
 			</div>
 		  </div>
