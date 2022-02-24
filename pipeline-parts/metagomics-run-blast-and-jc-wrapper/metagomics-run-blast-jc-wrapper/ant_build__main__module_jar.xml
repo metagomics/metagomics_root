@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." name="Run_MetagomicsFastaParser_Jobcenter_Module build jar" default="createInstallables">
+<project basedir="." name="Run_MetagomicsRunBlast_Jobcenter_Module build jar" default="createInstallables">
 
 
 	<!-- The same name cannot be used more than once for a property   -->
@@ -10,10 +10,10 @@
 
   	<!-- name of jar or whatever that is copied to deploy -->
 
-    <property name="installationNameRun_MetagomicsFastaParser_Jobcenter_Module" value="Run_MetagomicsFastaParser_Jobcenter_Module_installation" />
+    <property name="installationNameRun_MetagomicsRunBlast_Jobcenter_Module" value="Run_MetagomicsRunBlast_Jobcenter_Module_installation" />
 
 	<!-- main jar for this module  -->
-    <property name="module_main_jar" value="run_metagomics_fasta_parser_main_code.jar" />
+    <property name="module_main_jar" value="run_metagomics_run_blast_main_code.jar" />
   	<property name="module_main_jar_dir" value="main_code_jar_generated" />
 
     <property name="src" value="src" />
@@ -70,13 +70,13 @@
 
 
 	  	<!-- subdirectory being processed -->
-	    <property name="subdirectoryNameRun_MetagomicsFastaParser_Jobcenter_Module" value="Run_MetagomicsFastaParser_Jobcenter_Module" />
+	    <property name="subdirectoryNameRun_MetagomicsRunBlast_Jobcenter_Module" value="Run_MetagomicsRunBlast_Jobcenter_Module" />
 
 	  	<!-- main jar in subdirectory being processed -->
 	    <property name="subdirectoryMainJarRunProgram" value="run_Program_RequiredThreads_module_main.jar" />
 
 
-	    <mkdir dir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}" />
+	    <mkdir dir="installables/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}" />
 
 	<!--
 		<copy file="general_files_for_installables/README_General_Overview.txt" todir="installables/jobmanager_client_installation" />
@@ -84,15 +84,15 @@
 	-->
 
 
-		<mkdir dir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}" />
-		<mkdir dir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/config" />
-		<mkdir dir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/lib" />
-		<mkdir dir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/main_jar" />
+		<mkdir dir="installables/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}" />
+		<mkdir dir="installables/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/config" />
+		<mkdir dir="installables/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/lib" />
+		<mkdir dir="installables/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/main_jar" />
 
-		<mkdir dir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/config_sample_files" />
+		<mkdir dir="installables/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/config_sample_files" />
 
 
-	  	<copy todir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/lib" >
+	  	<copy todir="installables/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/lib" >
 	  		    <fileset dir="lib">
 
 		    	<!--
@@ -102,19 +102,19 @@
 	  	</copy>
 
 	  	
-	  	<copy file="${module_main_jar_dir}${file.separator}${module_main_jar}" todir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/main_jar" />
+	  	<copy file="${module_main_jar_dir}${file.separator}${module_main_jar}" todir="installables/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/main_jar" />
 
 	<!--
-		<copy file="general_files_for_installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/config_sample_files_directory_explanation.txt" todir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/config_sample_files" />
+		<copy file="general_files_for_installables/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/config_sample_files_directory_explanation.txt" todir="installables/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/config_sample_files" />
 	-->
-	  	<copy todir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/config_sample_files" >
+	  	<copy todir="installables/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/config_sample_files" >
 	  		    <fileset dir="config_sample_files">
 		    </fileset>
 	  	</copy>
 
 	<!--
-	  	<copy todir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/config" >
-	  		    <fileset dir="${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}/config">
+	  	<copy todir="installables/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/config" >
+	  		    <fileset dir="${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}/config">
 		    </fileset>
 	  	</copy>
 	-->
@@ -124,7 +124,7 @@
 
 
 
-	    <jar jarfile="${deploy}/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}.jar" basedir="installables/${installationNameRun_MetagomicsFastaParser_Jobcenter_Module}" />
+	    <jar jarfile="${deploy}/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}.jar" basedir="installables/${installationNameRun_MetagomicsRunBlast_Jobcenter_Module}" />
 
 
 

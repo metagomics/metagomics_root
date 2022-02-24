@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="US-ASCII" ?>
-<project name="RunMetagomicsFastaParser_MainCodeJar" default="build_jar" basedir=".">
+<project name="RunMetagomicsRunBlast_MainCodeJar" default="build_jar" basedir=".">
 
   <target name="init">
     <tstamp/>
 
   	<!-- name of jar or whatever that is copied to deploy -->
-    <property name="deployablename" value="run_metagomics_fasta_parser_main_code.jar" />
+    <property name="deployablename" value="run_metagomics_run_blast_main_code.jar" />
 
     <property name="src" value="src" />
     <property name="build" value="build" />
