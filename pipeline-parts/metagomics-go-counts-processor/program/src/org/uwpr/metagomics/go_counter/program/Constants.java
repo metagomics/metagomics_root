@@ -11,7 +11,7 @@ public class Constants {
 	public static final String MARK_RUN_COMPLETE_URL
 	= OperatingSystemDetection.isWindows()
 	? "http://localhost:8080/metagomics/services/run/markComplete"   // use this value if Windows
-			: "http://www.yeastrc.org/metagomics/services/run/markComplete";             // use this value if not Windows
+			: "http://meta.yeastrc.org/metagomics/services/run/markComplete";             // use this value if not Windows
 	
 	
 	public static final String DATA_DOWNLOAD_DIRECTORY

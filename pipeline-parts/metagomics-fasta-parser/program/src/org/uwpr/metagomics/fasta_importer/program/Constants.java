@@ -14,6 +14,6 @@ public class Constants {
 	public static final String MARK_FASTA_COMPLETE_URL
 	= OperatingSystemDetection.isWindows()
 	? "http://localhost:8080/metagomics/services/fasta/markComplete"   // use this value if Windows
-			: "http://www.yeastrc.org/metagomics/services/fasta/markComplete";             // use this value if not Windows
+			: "http://meta.yeastrc.org/metagomics/services/fasta/markComplete";             // use this value if not Windows
 	
 }
