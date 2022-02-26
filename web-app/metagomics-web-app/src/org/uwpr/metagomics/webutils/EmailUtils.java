@@ -7,19 +7,18 @@ import org.uwpr.metagomics.dao.UploadedFastaFileDAO;
 import org.uwpr.metagomics.dto.FastaFileDTO;
 import org.uwpr.metagomics.dto.RunDTO;
 import org.uwpr.metagomics.dto.UploadedFastaFileDTO;
-import org.uwpr.metagomics.email.EmailConfig;
-import org.uwpr.metagomics.email.SendEmail;
-import org.uwpr.metagomics.email.SendEmailDTO;
 import org.uwpr.metagomics.webconstants.WebAppConstants;
+import org.yeastrc.sendmail.SendMail;
 
 public class EmailUtils {
 
 	public static EmailUtils getInstance() { return new EmailUtils(); }
-	
+
+	private static final String EMAIL_FROM_ADDRESS = "do_not_reply@yeastrc.org";
 	private static final String SUBJECT_FASTA_NOTIFICATION_SUCCESS = "Metagomics FASTA file upload complete";
 	private static final String SUBJECT_RUN_READY_NOTIFICATION_SUCCESS = "Metagomics run upload complete";
 	
-	private static final Logger log = Logger.getLogger(SendEmail.class);
+	private static final Logger log = Logger.getLogger(EmailUtils.class);
 
 	
 	public void notifyOfReadyFastaUpload( UploadedFastaFileDTO uploadedFastaFile ) throws Exception {
@@ -31,17 +30,13 @@ public class EmailUtils {
 		
 		message = message.replace( "#FASTA_FILENAME#",  ff.getFilename() );
 		message = message.replace( "#UPLOAD_FASTA_FILE_URL#",  WebAppConstants.VIEW_UPLOADED_FASTA_FILE_URL + "?uid=" + uploadedFastaFile.getUniqueId() );
-		
-		
-		SendEmailDTO email = new SendEmailDTO();
-		email.setEmailSubject( SUBJECT_FASTA_NOTIFICATION_SUCCESS );
-		email.setFromEmailAddress( EmailConfig.EMAIL_FROM_ADDRESS );
-		email.setToEmailAddress( uploadedFastaFile.getEmailAddress() );
-		email.setEmailBody( message );
-		
+
+		SendMail sendMail = new SendMail();
+
 		try {
-			SendEmail.getInstance().sendEmail( email );
-		} catch (Exception e) {
+			sendMail.send( uploadedFastaFile.getEmailAddress(), EMAIL_FROM_ADDRESS, SUBJECT_FASTA_NOTIFICATION_SUCCESS, message );
+
+		} catch (Throwable e) {
 			log.error( "Error sending email: " + e.getMessage() );
 			System.out.println( "Error sending email: " + e.getMessage() );
 		}
@@ -64,17 +59,13 @@ public class EmailUtils {
 			throw new Exception( "Could not find uploaded fasta file id for run id: " + runId );
 		
 		message = message.replace( "#UPLOAD_FASTA_FILE_URL#",  WebAppConstants.VIEW_UPLOADED_FASTA_FILE_URL + "?uid=" + uploadedFastaFile.getUniqueId() );
-		
-		
-		SendEmailDTO email = new SendEmailDTO();
-		email.setEmailSubject( SUBJECT_RUN_READY_NOTIFICATION_SUCCESS );
-		email.setFromEmailAddress( EmailConfig.EMAIL_FROM_ADDRESS );
-		email.setToEmailAddress( uploadedFastaFile.getEmailAddress() );
-		email.setEmailBody( message );
-		
+
+		SendMail sendMail = new SendMail();
+
 		try {
-			SendEmail.getInstance().sendEmail( email );
-		} catch (Exception e) {
+			sendMail.send( uploadedFastaFile.getEmailAddress(), EMAIL_FROM_ADDRESS, SUBJECT_RUN_READY_NOTIFICATION_SUCCESS, message );
+
+		} catch (Throwable e) {
 			log.error( "Error sending email: " + e.getMessage() );
 			System.out.println( "Error sending email: " + e.getMessage() );
 		}

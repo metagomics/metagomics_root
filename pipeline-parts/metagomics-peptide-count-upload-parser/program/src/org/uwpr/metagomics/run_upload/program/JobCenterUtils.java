@@ -10,7 +10,7 @@ import org.jobcenter.coreinterfaces.JobSubmissionInterface;
 
 public class JobCenterUtils {
 
-	private final String connectionURL = "http://localhost/JobCenter_Server_Jersey/";
+	private final String connectionURL = "http://web/JobCenter_Server_Jersey/";
 
 	
 	public static JobCenterUtils getInstance() { return new JobCenterUtils(); }
