@@ -224,6 +224,8 @@ public class GOCounterRunner {
 							method2.invoke( obj, data, imageFile );
 						    	
 						} catch ( Exception e ) {
+							e.printStackTrace();
+
 							System.out.println( "Error creating images: " + e.getMessage() );
 							System.err.println( "Error creating images: " + e.getMessage() );
 						}
