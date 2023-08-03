@@ -4,3 +4,4 @@ bin
 deploy
 deploy_jobcenter_modules
 .idea
+*.iml

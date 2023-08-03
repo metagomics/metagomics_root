@@ -160,7 +160,7 @@ public class GOCounterRunner {
 		
 		
 		// save the taxonomy report
-		TaxonomyReportGenerator.getInstance().generateTaxonomyReport( runId, RUN_PSM_COUNT, peptideIdCounts, GO_NODE_COUNT_MAP, GO_NODE_PEPTIDE__ID_MAP);
+		TaxonomyReportGenerator.getInstance().generateTaxonomyReport( runId, RUN_PSM_COUNT, peptideIdCounts, GO_NODE_COUNT_MAP, GO_NODE_PEPTIDE__ID_MAP, PEPTIDE_ID_SEQUENCE_MAP);
 		
 		
 		// save GO images to disk

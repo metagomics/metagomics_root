@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.sql.Connection;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.uwpr.metagomics.dto.RunDTO;
@@ -26,7 +27,8 @@ public class TaxonomyReportGenerator {
 										long totalSpectra,
 										Map<Integer, Long> peptideCounts,
 										Map<GONode, Long> GO_NODE_COUNT_MAP,
-										Map<GONode, Collection<Integer>> GO_NODE_PEPTIDE__ID_MAP ) throws Exception  {
+										Map<GONode, Collection<Integer>> GO_NODE_PEPTIDE__ID_MAP,
+										Map<Integer, String> PEPTIDE_ID_SEQUENCE_MAP) throws Exception  {
 		
 		/*
 		 * For each GO term, iterate over all the peptides that contributed to that GO term, find the
@@ -34,7 +36,8 @@ public class TaxonomyReportGenerator {
 		 * counts for those taxa by the spectral count for the peptide.
 		 */
 		Map<GONode, Map<NCBITaxonomyNode, Long>> GO_TAXON_COUNTS = new HashMap<>();
-				
+		Map<GONode, Map<NCBITaxonomyNode, Collection<Integer>>> GO_TAXON_PEPTIDES = new HashMap<>();
+
 		for( GONode node : GO_NODE_COUNT_MAP.keySet() ) {
 						
 			Map<NCBITaxonomyNode, Long> taxonomyCountsForThisGOTerm = new HashMap<>();
@@ -55,6 +58,17 @@ public class TaxonomyReportGenerator {
 					}
 										
 					taxonomyCountsForThisGOTerm.put( taxonNode, count );
+
+					// add this peptide id to the peptide ids for this go + taxon
+					if(!GO_TAXON_PEPTIDES.containsKey(node)) {
+						GO_TAXON_PEPTIDES.put(node, new HashMap<>());
+					}
+
+					if(!GO_TAXON_PEPTIDES.get(node).containsKey(taxonNode)) {
+						GO_TAXON_PEPTIDES.get(node).put(taxonNode, new HashSet<>());
+					}
+
+					GO_TAXON_PEPTIDES.get(node).get(taxonNode).add(peptideId);
 				}
 			}
 			
@@ -66,6 +80,7 @@ public class TaxonomyReportGenerator {
 		// taxa regardless of go term
 
 		Map<NCBITaxonomyNode, Long> TOTAL_TAXON_COUNTS = new HashMap<>();
+		Map<NCBITaxonomyNode, Collection<Integer>> TOTAL_TAXON_PEPTIDES = new HashMap<>();
 
 		for( int peptideId : peptideCounts.keySet()) {
 
@@ -83,6 +98,13 @@ public class TaxonomyReportGenerator {
 				}
 
 				TOTAL_TAXON_COUNTS.put( taxonNode, count );
+
+				// add this peptide to the peptide is for this taxon
+				if(!TOTAL_TAXON_PEPTIDES.containsKey(taxonNode)) {
+					TOTAL_TAXON_PEPTIDES.put(taxonNode, new HashSet<>());
+				}
+
+				TOTAL_TAXON_PEPTIDES.get(taxonNode).add(peptideId);
 			}
 		}
 
@@ -116,7 +138,7 @@ public class TaxonomyReportGenerator {
 			fw.write( "# MetaGOmics version: " + VersionUtils.getVersion() + "\n" );
 			fw.write( "# Run date: " + new java.util.Date() + "\n" );
 			
-			fw.write( "GO acc\tGO aspect\tGO name\ttaxon name\tNCBI taxonomy id\ttaxonomy rank\tPSM count\tratio of GO\tratio of run\n" );
+			fw.write( "GO acc\tGO aspect\tGO name\ttaxon name\tNCBI taxonomy id\ttaxonomy rank\tPSM count\tratio of GO\tratio of run\tpeptides\n" );
 				
 				
 			for( GONode node : GO_TAXON_COUNTS.keySet() ) {
@@ -137,8 +159,10 @@ public class TaxonomyReportGenerator {
 
 					fw.write(go_taxon_count + "\t");
 					fw.write(((double) go_taxon_count / (double) go_count) + "\t");
-					fw.write(((double) go_taxon_count / (double) totalSpectra) + "\n");
+					fw.write(((double) go_taxon_count / (double) totalSpectra) + "\t");
 
+					Collection<String> peptides = this.getPeptideSequencesForPeptideIds(GO_TAXON_PEPTIDES.get(node).get(taxonNode), PEPTIDE_ID_SEQUENCE_MAP);
+					fw.write(String.join(",", peptides) + "\n");
 				}
 			}
 
@@ -156,7 +180,10 @@ public class TaxonomyReportGenerator {
 
 				fw.write(count + "\t");
 				fw.write("\t");
-				fw.write(((double) count / (double) totalSpectra) + "\n");
+				fw.write(((double) count / (double) totalSpectra) + "\t");
+
+				Collection<String> peptides = this.getPeptideSequencesForPeptideIds(TOTAL_TAXON_PEPTIDES.get(taxonNode), PEPTIDE_ID_SEQUENCE_MAP);
+				fw.write(String.join(",", peptides) + "\n");
 			}
 							
 		} finally {
@@ -168,8 +195,16 @@ public class TaxonomyReportGenerator {
 				catch( Exception e ) { ; }
 			}
 		}
-		
-		
-		
+	}
+
+	private Collection<String> getPeptideSequencesForPeptideIds(Collection<Integer> peptideIds, Map<Integer, String> PEPTIDE_ID_SEQUENCE_MAP) {
+
+		Collection<String> sequences = new HashSet<>();
+
+		for(int peptideId : peptideIds ) {
+			sequences.add(PEPTIDE_ID_SEQUENCE_MAP.get(peptideId));
+		}
+
+		return sequences;
 	}
 }
